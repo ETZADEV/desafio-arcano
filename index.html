@@ -5,9 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Desafió Arcano</title>
 
+    <link rel="icon" href="./img/icon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="./css/main.css" />
+    <script src="./js/main.js"></script>
   </head>
   <body>
-    <script src="./js/main.js"></script>
+    <h1>Desafió Arcano! 💧🔥🌱💨</h1>
+
+    <section id="select-wizards">
+      <h2>Elige a tu mago aliado</h2>
+
+      <input type="radio" name="wizards" id="magd" value="Magd" checked />
+      <label for="magd">Magd</label><br />
+
+      <input type="radio" name="wizards" id="flamewalker" value="Flamewalker" />
+      <label for="flamewalker">Flamewalker</label><br />
+
+      <input type="radio" name="wizards" id="stoneheart" value="Stoneheart" />
+      <label for="stoneheart">Stoneheart</label><br />
+
+      <input type="radio" name="wizards" id="whisperwind" value="Whisperwind" />
+      <label for="whisperwind">Whisperwind</label><br />
+
+      <button type="button" id="select-wizard">seleccionar</button>
+    </section>
+
+    <section id="select-attact">
+      <h2>Elige tu ataque</h2>
+
+      <p>
+        El mago aliado <span id="ally-wizard"></span> tiene <span>3</span> vidas
+      </p>
+      <p>
+        El mago enemigo <span id="enemy-wizard"></span> tiene
+        <span>3</span> vidas
+      </p>
+
+      <p>
+        <button type="button" id="btn-water">Agua 💧</button>
+        <button type="button" id="btn-fire">Fuego 🔥</button>
+        <button type="button" id="btn-earth">Tierra 🌱</button>
+        <button type="button" id="btn-wind">Viento 💨</button>
+      </p>
+    </section>
+
+    <section id="messages">
+      <p>Tu mago ataco con 🔥, y el mago enemigo ataco con 💧 - PERDISTE</p>
+    </section>
+
+    <section id="reset">
+      <button type="button" id="btn-reset">Reiniciar juego</button>
+    </section>
   </body>
 </html>
