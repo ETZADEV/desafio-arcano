@@ -1,4 +1,4 @@
-import { attacksList, damageWizard, lives } from "./wizards.js";
+import { attacksList, damageWizard, health } from "./wizards.js";
 
 const initGame = () => {
   const selectWizard = document.getElementById("select-wizard");
@@ -20,7 +20,7 @@ const selectWizardUser = () => {
 
   userWizard.innerHTML = wizardUser;
   showAttacks(wizardUser.toLowerCase());
-  showLife(wizardUser, 1);
+  showHealth(wizardUser, 1);
 };
 
 const selectWizardEnemy = () => {
@@ -29,7 +29,7 @@ const selectWizardEnemy = () => {
   const wizardSelected = wizards[random(3, 0)];
 
   enemyWizard.innerHTML = wizardSelected;
-  showLife(wizardSelected, 2);
+  showHealth(wizardSelected, 2);
 };
 
 const showAttacks = (wizard) => {
@@ -93,59 +93,67 @@ const createMessages = (userWizard, userAttack, enemyWizard, enemyAttack) => {
   messages.appendChild(message);
 };
 
-const showLife = (wizard, id) => {
-  const lifeWizard = lives(wizard);
-  const livesContainer = document.getElementById("lives");
-  const wizardLife = document.createElement("p");
+const showHealth = (wizard, id) => {
+  const healthWizard = health(wizard);
+  const healthContainer = document.getElementById("health");
+  const wizardHealth = document.createElement("p");
 
-  wizardLife.id = `${wizard}-${id}`;
-  wizardLife.textContent = lifeWizard;
+  wizardHealth.id = `${wizard}-${id}`;
+  wizardHealth.textContent = healthWizard;
 
-  livesContainer.appendChild(wizardLife);
+  healthContainer.appendChild(wizardHealth);
 };
 
-const updateLife = (id, damaged, attacker, attack) => {
-  const lifeWizard = document.getElementById(`${damaged}-${id}`);
-  let lifeWizardValue = lifeWizard.textContent;
+const updateHealth = (id, damaged, attacker, attack) => {
+  const healthWizard = document.getElementById(`${damaged}-${id}`);
+  let healthWizardValue = healthWizard.textContent;
 
   const damage = damageWizard(damaged, attacker, attack);
-  lifeWizardValue -= damage;
+  healthWizardValue -= damage;
 
-  console.log(`Damaged: ${damaged}, attacker: ${attacker}, attack: ${attack}`);
-
-  return [lifeWizard, lifeWizardValue];
+  return [healthWizard, healthWizardValue];
 };
 
 const validateWinner = (damaged, attacker, attackUser, attackEnemy) => {
-  const [lifeWizardEnemy, lifeWizardEnemyValue] = updateLife(
+  const [healthWizardEnemy, healthWizardEnemyValue] = updateHealth(
     2,
     damaged,
     attacker,
     attackUser
   );
 
-  const [lifeWizardUser, lifeWizardUserValue] = updateLife(
+  const [healthWizardUser, healthWizardUserValue] = updateHealth(
     1,
     attacker,
     damaged,
     attackEnemy
   );
 
-  console.log(lifeWizardUserValue);
-  console.log(lifeWizardEnemyValue);
-
-  if (lifeWizardUserValue > 0 && lifeWizardEnemyValue > 0) {
-    lifeWizardUser.textContent = lifeWizardUserValue;
-    lifeWizardEnemy.textContent = lifeWizardEnemyValue;
+  if (healthWizardUserValue > 0 && healthWizardEnemyValue > 0) {
+    healthWizardUser.textContent = healthWizardUserValue;
+    healthWizardEnemy.textContent = healthWizardEnemyValue;
   } else {
-    if (lifeWizardUserValue < 0) {
-      lifeWizardUser.textContent = 0;
-      alert(`El mago ${damaged} gana el Jugador Pierde`);
-    } else if (lifeWizardEnemyValue < 0) {
-      lifeWizardEnemy.textContent = 0;
-      alert(`El mago ${attacker} gana la PC pierde`);
+    if (healthWizardEnemyValue <= 0) {
+      healthWizardEnemy.textContent = 0;
+
+      alert(`El mago ${attacker} gana, la PC pierde`);
+      hideAttacks();
+    } else if (healthWizardUserValue <= 0) {
+      healthWizardUser.textContent = 0;
+      healthWizardEnemy.textContent = healthWizardEnemyValue;
+
+      alert(`El mago ${damaged} gana, el Jugador Pierde`);
+      hideAttacks();
     }
   }
+};
+
+const hideAttacks = () => {
+  const btnAttack1 = document.getElementById("btn-attack1");
+  const btnAttack2 = document.getElementById("btn-attack2");
+
+  btnAttack1.style.display = "none";
+  btnAttack2.style.display = "none";
 };
 
 const random = (max, min) => Math.floor(Math.random() * (max - min + 1) + min);

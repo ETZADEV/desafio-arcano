@@ -87,7 +87,7 @@ const damageWizard = (damaged, attacker, attack) => {
   return damage[damaged][attacker][attack];
 };
 
-const lives = (wizard) => {
+const health = (wizard) => {
   const lifeWizards = {
     Magd: 1020,
     Flamewalker: 1033,
@@ -98,4 +98,4 @@ const lives = (wizard) => {
   return lifeWizards[wizard];
 };
 
-export { attacksList, damageWizard, lives };
+export { attacksList, damageWizard, health };
