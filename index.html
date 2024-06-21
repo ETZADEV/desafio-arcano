@@ -7,7 +7,7 @@
 
     <link rel="icon" href="./img/icon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="./css/main.css" />
-    <script src="./js/main.js"></script>
+    <script src="./js/main.js" type="module"></script>
   </head>
   <body>
     <h1>Desafió Arcano! 💧🔥🌱💨</h1>
@@ -16,25 +16,44 @@
       <h2>Elige a tu mago aliado</h2>
 
       <input type="radio" name="wizards" id="magd" value="Magd" checked />
-      <label for="magd">Magd</label><br />
+      <!-- <label for="magd">Magd</label><br /> -->
+      <label for="magd">
+        <img src="./img/wizards/waterWizard.gif" alt="water wizard" />
+        Magd
+      </label>
+      <br />
 
       <input type="radio" name="wizards" id="flamewalker" value="Flamewalker" />
-      <label for="flamewalker">Flamewalker</label><br />
+      <label for="flamewalker">
+        <img src="./img/wizards/fireWizard.gif" alt="fire wizard" />
+        Flamewalker
+      </label>
+      <br />
 
       <input type="radio" name="wizards" id="stoneheart" value="Stoneheart" />
-      <label for="stoneheart">Stoneheart</label><br />
+      <label for="stoneheart">
+        <img src="./img/wizards/earthWizard.gif" alt="earth wizard" />
+        Stoneheart
+      </label>
+      <br />
 
       <input type="radio" name="wizards" id="whisperwind" value="Whisperwind" />
-      <label for="whisperwind">Whisperwind</label><br />
+      <label for="whisperwind">
+        <img src="./img/wizards/windWizard.gif" alt="wind wizard" />
+        Whisperwind
+      </label>
+      <br />
 
       <button type="button" id="select-wizard">seleccionar</button>
     </section>
 
-    <section id="select-attact">
+    <section id="select-attack">
       <h2>Elige tu ataque</h2>
 
+      <div id="lives"></div>
+
       <p>
-        El mago aliado <span id="ally-wizard"></span> tiene <span>3</span> vidas
+        El mago aliado <span id="user-wizard"></span> tiene <span>3</span> vidas
       </p>
       <p>
         El mago enemigo <span id="enemy-wizard"></span> tiene
@@ -44,16 +63,10 @@
       <p>
         <button type="button" id="btn-attack1">1</button>
         <button type="button" id="btn-attack2">2</button>
-        <!-- <button type="button" id="btn-water">Agua 💧</button>
-        <button type="button" id="btn-fire">Fuego 🔥</button>
-        <button type="button" id="btn-earth">Tierra 🌱</button>
-        <button type="button" id="btn-wind">Viento 💨</button> -->
       </p>
     </section>
 
-    <section id="messages">
-      <p>Tu mago ataco con 🔥, y el mago enemigo ataco con 💧 - PERDISTE</p>
-    </section>
+    <section id="messages"></section>
 
     <section id="reset">
       <button type="button" id="btn-reset">Reiniciar juego</button>
