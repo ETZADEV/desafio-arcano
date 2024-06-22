@@ -18,28 +18,28 @@
       <input type="radio" name="wizards" id="magd" value="Magd" checked />
       <!-- <label for="magd">Magd</label><br /> -->
       <label for="magd">
-        <img src="./img/wizards/waterWizard.gif" alt="water wizard" />
+        <img src="./img/wizards/Magd.gif" alt="water wizard" />
         Magd
       </label>
       <br />
 
       <input type="radio" name="wizards" id="flamewalker" value="Flamewalker" />
       <label for="flamewalker">
-        <img src="./img/wizards/fireWizard.gif" alt="fire wizard" />
+        <img src="./img/wizards/Flamewalker.gif" alt="fire wizard" />
         Flamewalker
       </label>
       <br />
 
       <input type="radio" name="wizards" id="stoneheart" value="Stoneheart" />
       <label for="stoneheart">
-        <img src="./img/wizards/earthWizard.gif" alt="earth wizard" />
+        <img src="./img/wizards/Stoneheart.gif" alt="earth wizard" />
         Stoneheart
       </label>
       <br />
 
       <input type="radio" name="wizards" id="whisperwind" value="Whisperwind" />
       <label for="whisperwind">
-        <img src="./img/wizards/windWizard.gif" alt="wind wizard" />
+        <img src="./img/wizards/Whisperwind.gif" alt="wind wizard" />
         Whisperwind
       </label>
       <br />
@@ -52,13 +52,22 @@
 
       <div id="health"></div>
 
-      <p>
-        El mago aliado <span id="user-wizard"></span> tiene <span>3</span> vidas
-      </p>
-      <p>
-        El mago enemigo <span id="enemy-wizard"></span> tiene
-        <span>3</span> vidas
-      </p>
+      <div id="lives-user">
+        <span id="user-wizard" lives="3"></span>
+        <div id="hearts-user">
+          <img src="./img/lives/life.png" alt="Life" id="life-user-1" />
+          <img src="./img/lives/life.png" alt="Life" id="life-user-2" />
+          <img src="./img/lives/life.png" alt="Life" id="life-user-3" />
+        </div>
+      </div>
+      <div id="lives-enemy">
+        <span id="enemy-wizard" lives="3"></span>
+        <div id="hearts-enemy">
+          <img src="./img/lives/life.png" alt="Life" id="life-enemy-1" />
+          <img src="./img/lives/life.png" alt="Life" id="life-enemy-2" />
+          <img src="./img/lives/life.png" alt="Life" id="life-enemy-3" />
+        </div>
+      </div>
 
       <p>
         <button type="button" id="btn-attack1">1</button>

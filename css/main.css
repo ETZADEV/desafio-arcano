@@ -12,3 +12,12 @@
     display: none;
   }
 }
+
+#hearts-user,
+#hearts-enemy {
+  display: none;
+
+  & img {
+    width: 30px;
+  }
+}

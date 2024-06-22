@@ -10,6 +10,7 @@ const initGame = () => {
 const selectWizards = () => {
   selectWizardUser();
   selectWizardEnemy();
+  showLives();
 };
 
 const selectWizardUser = () => {
@@ -18,6 +19,7 @@ const selectWizardUser = () => {
   ).value;
   const userWizard = document.getElementById("user-wizard");
 
+  showWizard("user", wizardUser);
   userWizard.innerHTML = wizardUser;
   showAttacks(wizardUser.toLowerCase());
   showHealth(wizardUser, 1);
@@ -28,8 +30,20 @@ const selectWizardEnemy = () => {
   const wizards = ["Magd", "Flamewalker", "Stoneheart", "Whisperwind"];
   const wizardSelected = wizards[random(3, 0)];
 
+  showWizard("enemy", wizardSelected);
   enemyWizard.innerHTML = wizardSelected;
   showHealth(wizardSelected, 2);
+};
+
+const showWizard = (selected, wizard) => {
+  const selectedWizard = document.getElementById(`lives-${selected}`);
+  const wizardImg = document.createElement("img");
+
+  wizardImg.src = `../img/wizardsBase/${wizard}Base.gif`;
+  wizardImg.id = `${wizard}Base`;
+  wizardImg.alt = wizard;
+
+  selectedWizard.prepend(wizardImg);
 };
 
 const showAttacks = (wizard) => {
@@ -136,12 +150,14 @@ const validateWinner = (damaged, attacker, attackUser, attackEnemy) => {
     if (healthWizardEnemyValue <= 0) {
       healthWizardEnemy.textContent = 0;
 
+      showHearts("enemy");
       alert(`El mago ${attacker} gana, la PC pierde`);
       hideAttacks();
     } else if (healthWizardUserValue <= 0) {
       healthWizardUser.textContent = 0;
       healthWizardEnemy.textContent = healthWizardEnemyValue;
 
+      showHearts("user");
       alert(`El mago ${damaged} gana, el Jugador Pierde`);
       hideAttacks();
     }
@@ -154,6 +170,35 @@ const hideAttacks = () => {
 
   btnAttack1.style.display = "none";
   btnAttack2.style.display = "none";
+};
+
+const showLives = () => {
+  const heartsUser = document.getElementById("hearts-user");
+  const heartsEnemy = document.getElementById("hearts-enemy");
+
+  heartsUser.style.display = "inline-block";
+  heartsEnemy.style.display = "inline-block";
+};
+
+const updateLives = (wizard) => {
+  const livesWizard = document.getElementById(`${wizard}-wizard`);
+  let lives = livesWizard.getAttribute("lives");
+  lives -= 1;
+
+  livesWizard.setAttribute("lives", lives);
+
+  return lives;
+};
+
+const showHearts = (wizard) => {
+  const lives = updateLives(wizard);
+  const imgLives = document.querySelectorAll(`#hearts-${wizard} > img`);
+
+  for (let i = 3; i > lives; i--) {
+    const img = imgLives[i - 1];
+
+    img.src = "../img/lives/death.png";
+  }
 };
 
 const random = (max, min) => Math.floor(Math.random() * (max - min + 1) + min);
