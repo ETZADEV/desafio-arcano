@@ -7,17 +7,43 @@
   font-family: "Press Start 2P", system-ui;
 }
 
-#select-attack {
-  & button {
-    display: none;
-  }
+#lives {
+  display: none;
+}
+
+#health-user-container,
+#health-enemy-container {
+  position: relative;
+  width: 30%;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+}
+
+#health-user-bar,
+#health-enemy-bar {
+  width: 100%;
+  height: 30px;
+  background-color: #5ca08e;
+  border-radius: 10px;
+  transition: width 0.4s ease;
 }
 
 #hearts-user,
 #hearts-enemy {
-  display: none;
-
   & img {
     width: 30px;
+  }
+}
+
+#select-attack {
+  & #lives-user,
+  & #lives-enemy {
+    & progress {
+      display: none;
+    }
+  }
+
+  & button {
+    display: none;
   }
 }

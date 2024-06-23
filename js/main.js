@@ -22,7 +22,7 @@ const selectWizardUser = () => {
   showWizard("user", wizardUser);
   userWizard.innerHTML = wizardUser;
   showAttacks(wizardUser.toLowerCase());
-  showHealth(wizardUser, 1);
+  showHealth("user", wizardUser, 1);
 };
 
 const selectWizardEnemy = () => {
@@ -32,7 +32,7 @@ const selectWizardEnemy = () => {
 
   showWizard("enemy", wizardSelected);
   enemyWizard.innerHTML = wizardSelected;
-  showHealth(wizardSelected, 2);
+  showHealth("enemy", wizardSelected, 2);
 };
 
 const showWizard = (selected, wizard) => {
@@ -107,15 +107,25 @@ const createMessages = (userWizard, userAttack, enemyWizard, enemyAttack) => {
   messages.appendChild(message);
 };
 
-const showHealth = (wizard, id) => {
+const showHealth = (player, wizard, id) => {
   const healthWizard = health(wizard);
-  const healthContainer = document.getElementById("health");
+  const healthContainer = document.getElementById(`health-${player}-container`);
   const wizardHealth = document.createElement("p");
 
   wizardHealth.id = `${wizard}-${id}`;
   wizardHealth.textContent = healthWizard;
 
   healthContainer.appendChild(wizardHealth);
+};
+
+const updateHealthBar = (player, wizard, healthWizard) => {
+  const healthPlayer = document.getElementById(`health-${player}-bar`);
+  const healthBase = health(wizard);
+  const percent = Math.floor((healthWizard * 100) / healthBase);
+
+  percent <= 0
+    ? (healthPlayer.style.width = `0%`)
+    : (healthPlayer.style.width = `${percent}%`);
 };
 
 const updateHealth = (id, damaged, attacker, attack) => {
@@ -144,21 +154,28 @@ const validateWinner = (damaged, attacker, attackUser, attackEnemy) => {
   );
 
   if (healthWizardUserValue > 0 && healthWizardEnemyValue > 0) {
-    healthWizardUser.textContent = healthWizardUserValue;
     healthWizardEnemy.textContent = healthWizardEnemyValue;
+    updateHealthBar("enemy", damaged, healthWizardEnemyValue);
+
+    setTimeout(function () {
+      healthWizardUser.textContent = healthWizardUserValue;
+      updateHealthBar("user", attacker, healthWizardUserValue);
+    }, 1000);
   } else {
     if (healthWizardEnemyValue <= 0) {
       healthWizardEnemy.textContent = 0;
 
+      updateHealthBar("enemy", damaged, 0);
       showHearts("enemy");
-      alert(`El mago ${attacker} gana, la PC pierde`);
+      alert(`El mago ${attacker} gana el round, la PC pierde`);
       hideAttacks();
     } else if (healthWizardUserValue <= 0) {
       healthWizardUser.textContent = 0;
       healthWizardEnemy.textContent = healthWizardEnemyValue;
 
+      updateHealthBar("user", attacker, 0);
       showHearts("user");
-      alert(`El mago ${damaged} gana, el Jugador Pierde`);
+      alert(`El mago ${damaged} gana el round, el Jugador Pierde`);
       hideAttacks();
     }
   }
@@ -173,11 +190,9 @@ const hideAttacks = () => {
 };
 
 const showLives = () => {
-  const heartsUser = document.getElementById("hearts-user");
-  const heartsEnemy = document.getElementById("hearts-enemy");
+  const lives = document.getElementById("lives");
 
-  heartsUser.style.display = "inline-block";
-  heartsEnemy.style.display = "inline-block";
+  lives.style.display = "inline";
 };
 
 const updateLives = (wizard) => {
