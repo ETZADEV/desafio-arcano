@@ -139,6 +139,8 @@ const updateHealth = (id, damaged, attacker, attack) => {
 };
 
 const validateWinner = (damaged, attacker, attackUser, attackEnemy) => {
+  disabledButtons();
+
   const [healthWizardEnemy, healthWizardEnemyValue] = updateHealth(
     2,
     damaged,
@@ -160,6 +162,8 @@ const validateWinner = (damaged, attacker, attackUser, attackEnemy) => {
     setTimeout(function () {
       healthWizardUser.textContent = healthWizardUserValue;
       updateHealthBar("user", attacker, healthWizardUserValue);
+
+      enabledButtons();
     }, 1000);
   } else {
     if (healthWizardEnemyValue <= 0) {
@@ -178,6 +182,22 @@ const validateWinner = (damaged, attacker, attackUser, attackEnemy) => {
       alert(`El mago ${damaged} gana el round, el Jugador Pierde`);
       hideAttacks();
     }
+  }
+};
+
+const disabledButtons = () => {
+  const buttons = document.querySelectorAll("#select-attack > p > button");
+
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].disabled = true;
+  }
+};
+
+const enabledButtons = () => {
+  const buttons = document.querySelectorAll("#select-attack > p > button");
+
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].disabled = false;
   }
 };
 
