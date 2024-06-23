@@ -171,7 +171,7 @@ const validateWinner = (damaged, attacker, attackUser, attackEnemy) => {
 
       updateHealthBar("enemy", damaged, 0);
       showHearts("enemy");
-      alert(`El mago ${attacker} gana el round, la PC pierde`);
+      showAlert(attacker, "Gana");
       hideAttacks();
     } else if (healthWizardUserValue <= 0) {
       healthWizardUser.textContent = 0;
@@ -179,7 +179,7 @@ const validateWinner = (damaged, attacker, attackUser, attackEnemy) => {
 
       updateHealthBar("user", attacker, 0);
       showHearts("user");
-      alert(`El mago ${damaged} gana el round, el Jugador Pierde`);
+      showAlert(damaged, "Pierde");
       hideAttacks();
     }
   }
@@ -234,6 +234,17 @@ const showHearts = (wizard) => {
 
     img.src = "../img/lives/death.png";
   }
+};
+
+const showAlert = (wizard, result) => {
+  Swal.fire({
+    title: `Vencedor ${wizard}`,
+    text: `El usuario ${result}`,
+    imageUrl: `../img/wizards/${wizard}.gif`,
+    imageWidth: 80,
+    imageHeight: 80,
+    imageAlt: `Wizard ${wizard}`,
+  });
 };
 
 const random = (max, min) => Math.floor(Math.random() * (max - min + 1) + min);
