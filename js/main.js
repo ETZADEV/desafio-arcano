@@ -10,6 +10,7 @@ const initGame = () => {
 const selectWizards = () => {
   selectWizardUser();
   selectWizardEnemy();
+  disabledBtnSelect();
   showLives();
 };
 
@@ -33,6 +34,11 @@ const selectWizardEnemy = () => {
   showWizard("enemy", wizardSelected);
   enemyWizard.innerHTML = wizardSelected;
   showHealth("enemy", wizardSelected, 2);
+};
+
+const disabledBtnSelect = () => {
+  const selectWizard = document.getElementById("select-wizard");
+  selectWizard.disabled = true;
 };
 
 const showWizard = (selected, wizard) => {
@@ -159,7 +165,7 @@ const validateWinner = (damaged, attacker, attackUser, attackEnemy) => {
     healthWizardEnemy.textContent = healthWizardEnemyValue;
     updateHealthBar("enemy", damaged, healthWizardEnemyValue);
 
-    setTimeout(function () {
+    setTimeout(() => {
       healthWizardUser.textContent = healthWizardUserValue;
       updateHealthBar("user", attacker, healthWizardUserValue);
 
@@ -169,20 +175,28 @@ const validateWinner = (damaged, attacker, attackUser, attackEnemy) => {
     if (healthWizardEnemyValue <= 0) {
       healthWizardEnemy.textContent = 0;
 
-      updateHealthBar("enemy", damaged, 0);
-      showHearts("enemy");
-      showAlert(attacker, "Gana");
-      hideAttacks();
+      userVictory(damaged, attacker);
     } else if (healthWizardUserValue <= 0) {
       healthWizardUser.textContent = 0;
       healthWizardEnemy.textContent = healthWizardEnemyValue;
 
-      updateHealthBar("user", attacker, 0);
-      showHearts("user");
-      showAlert(damaged, "Pierde");
-      hideAttacks();
+      enemyVictory(damaged, attacker);
     }
+
+    setTimeout(() => resetRound(attacker, damaged), 2200);
   }
+};
+
+const userVictory = (damaged, attacker) => {
+  updateHealthBar("enemy", damaged, 0);
+  showHearts("enemy");
+  setTimeout(() => showAlert("enemy", attacker, "Gana", "Round"), 800);
+};
+
+const enemyVictory = (damaged, attacker) => {
+  updateHealthBar("user", attacker, 0);
+  showHearts("user");
+  setTimeout(() => showAlert("user", damaged, "Pierde", "Round"), 800);
 };
 
 const disabledButtons = () => {
@@ -201,33 +215,25 @@ const enabledButtons = () => {
   }
 };
 
-const hideAttacks = () => {
-  const btnAttack1 = document.getElementById("btn-attack1");
-  const btnAttack2 = document.getElementById("btn-attack2");
-
-  btnAttack1.style.display = "none";
-  btnAttack2.style.display = "none";
-};
-
 const showLives = () => {
   const lives = document.getElementById("lives");
 
   lives.style.display = "inline";
 };
 
-const updateLives = (wizard) => {
-  const livesWizard = document.getElementById(`${wizard}-wizard`);
-  let lives = livesWizard.getAttribute("lives");
+const updateLives = (player) => {
+  const livesPlayer = document.getElementById(`${player}-wizard`);
+  let lives = livesPlayer.getAttribute("lives");
   lives -= 1;
 
-  livesWizard.setAttribute("lives", lives);
+  livesPlayer.setAttribute("lives", lives);
 
   return lives;
 };
 
-const showHearts = (wizard) => {
-  const lives = updateLives(wizard);
-  const imgLives = document.querySelectorAll(`#hearts-${wizard} > img`);
+const showHearts = (player) => {
+  const lives = updateLives(player);
+  const imgLives = document.querySelectorAll(`#hearts-${player} > img`);
 
   for (let i = 3; i > lives; i--) {
     const img = imgLives[i - 1];
@@ -236,15 +242,51 @@ const showHearts = (wizard) => {
   }
 };
 
-const showAlert = (wizard, result) => {
+const livesPlayer = (player) => {
+  const livesPlayer = document.getElementById(`${player}-wizard`);
+  const lives = livesPlayer.getAttribute("lives");
+
+  return lives;
+};
+
+const showAlert = (player, wizard, result, type) => {
+  const lives = livesPlayer(player);
+
   Swal.fire({
     title: `Vencedor ${wizard}`,
-    text: `El usuario ${result}`,
+    text: `El usuario ${result} el ${type}`,
     imageUrl: `../img/wizards/${wizard}.gif`,
     imageWidth: 80,
     imageHeight: 80,
     imageAlt: `Wizard ${wizard}`,
+  }).then(() => {
+    setTimeout(() => {
+      if (lives <= 0) showAlert("user", wizard, result, "Combate");
+      return;
+    }, 500);
   });
+};
+
+const resetRound = (user, enemy) => {
+  resetHealthRound(user, enemy);
+  resetHealthBarRound(user, enemy);
+  enabledButtons();
+};
+
+const resetHealthRound = (user, enemy) => {
+  const healthUser = document.getElementById(`${user}-1`);
+  const healthEnemy = document.getElementById(`${enemy}-2`);
+
+  healthUser.innerHTML = health(user);
+  healthEnemy.innerHTML = health(enemy);
+};
+
+const resetHealthBarRound = () => {
+  const healthUserBar = document.getElementById(`health-user-bar`);
+  const healthEnemyBar = document.getElementById(`health-enemy-bar`);
+
+  healthUserBar.style.width = "100%";
+  healthEnemyBar.style.width = "100%";
 };
 
 const random = (max, min) => Math.floor(Math.random() * (max - min + 1) + min);
