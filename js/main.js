@@ -45,7 +45,7 @@ const showWizard = (selected, wizard) => {
   const selectedWizard = document.getElementById(`lives-${selected}`);
   const wizardImg = document.createElement("img");
 
-  wizardImg.src = `../img/wizardsBase/${wizard}Base.gif`;
+  wizardImg.src = `./img/wizardsBase/${wizard}Base.gif`;
   wizardImg.id = `${wizard}Base`;
   wizardImg.alt = wizard;
 
@@ -114,7 +114,7 @@ const showAttack = (wizard, attack, adjective) => {
     },
     text: `El mago ${adjective}: ${wizard} ataca con ${attack}`,
     color: "#fff",
-    imageUrl: `../img/attack/${attack}.gif`,
+    imageUrl: `./img/attack/${attack}.gif`,
     imageWidth: 170,
     imageHeight: 80,
     imageAlt: `Attack ${wizard}`,
@@ -275,11 +275,11 @@ const enemyVictory = (damaged, attacker) => {
 const showImageDead = (wizard) => {
   const wizardImg = document.getElementById(`${wizard}Base`);
 
-  wizardImg.src = `../img/dead/${wizard}Dead.gif`;
+  wizardImg.src = `./img/dead/${wizard}Dead.gif`;
   wizardImg.alt = `${wizard} dead`;
 
   setTimeout(() => {
-    wizardImg.src = `../img/wizardsBase/${wizard}Base.gif`;
+    wizardImg.src = `./img/wizardsBase/${wizard}Base.gif`;
     wizardImg.alt = wizard;
   }, 3200);
 };
@@ -323,7 +323,7 @@ const showHearts = (player) => {
   for (let i = 3; i > lives; i--) {
     const img = imgLives[i - 1];
 
-    img.src = "../img/lives/death.png";
+    img.src = "./img/lives/death.png";
   }
 };
 
@@ -341,7 +341,7 @@ const showAlert = (player, wizard, result, type) => {
     title: `Vencedor ${wizard}`,
     text: `El usuario ${result} el ${type}`,
     color: "#fff",
-    imageUrl: `../img/wizards/${wizard}.gif`,
+    imageUrl: `./img/wizards/${wizard}.gif`,
     imageWidth: 80,
     imageHeight: 80,
     imageAlt: `Wizard ${wizard}`,
