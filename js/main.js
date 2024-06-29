@@ -336,6 +336,9 @@ const livesPlayer = (player) => {
 
 const showAlert = (player, wizard, result, type) => {
   const lives = livesPlayer(player);
+  const jsConfetti = new JSConfetti();
+
+  jsConfetti.addConfetti();
 
   Swal.fire({
     title: `Vencedor ${wizard}`,
