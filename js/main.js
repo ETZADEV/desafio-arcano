@@ -81,6 +81,7 @@ const selectAttackUser = () => {
     const userWizard1 = userWizard.textContent;
     const userAttack = attack1.getAttribute("value");
 
+    showAttackPlayers(userWizard1, userAttack, enemyWizard, enemyAttack);
     createMessages(userWizard1, userAttack, enemyWizard, enemyAttack);
     validateWinner(enemyWizard, userWizard1, userAttack, enemyAttack);
   });
@@ -90,6 +91,7 @@ const selectAttackUser = () => {
     const userWizard2 = userWizard.textContent;
     const userAttack = attack2.getAttribute("value");
 
+    showAttackPlayers(userWizard2, userAttack, enemyWizard, enemyAttack);
     createMessages(userWizard2, userAttack, enemyWizard, enemyAttack);
     validateWinner(enemyWizard, userWizard2, userAttack, enemyAttack);
   });
@@ -103,6 +105,59 @@ const selectAttackEnemy = () => {
   const attack = attacks[enemy][random(1, 0)];
 
   return [enemyWizard, attack];
+};
+
+const showAttack = (wizard, attack, adjective) => {
+  Swal.fire({
+    customClass: {
+      title: "swal2-title",
+    },
+    text: `El mago ${adjective}: ${wizard} ataca con ${attack}`,
+    color: "#fff",
+    imageUrl: `../img/attack/${attack}.gif`,
+    imageWidth: 170,
+    imageHeight: 80,
+    imageAlt: `Attack ${wizard}`,
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    timer: 4000,
+  });
+};
+
+const showAttackPlayers = (
+  userWizard,
+  userAttack,
+  enemyWizard,
+  enemyAttack
+) => {
+  const healthEnemy = getHealthPlayer(2, enemyWizard, userWizard, userAttack);
+
+  if (healthEnemy > 0) {
+    setTimeout(() => showAttack(userWizard, userAttack, "Aliado"), 500);
+    setTimeout(() => showAttack(enemyWizard, enemyAttack, "Enemigo"), 6500);
+  }
+
+  setTimeout(() => showAttack(userWizard, userAttack, "Aliado"), 500);
+};
+
+const getHealthPlayer = (
+  id,
+  playerWizard,
+  contenderWizard,
+  contenderAttack
+) => {
+  let healthPlayer = document.getElementById(
+    `${playerWizard}-${id}`
+  ).textContent;
+  const damagePlayer = damageWizard(
+    playerWizard,
+    contenderWizard,
+    contenderAttack
+  );
+
+  healthPlayer -= damagePlayer;
+
+  return healthPlayer;
 };
 
 const createMessages = (userWizard, userAttack, enemyWizard, enemyAttack) => {
@@ -154,49 +209,79 @@ const validateWinner = (damaged, attacker, attackUser, attackEnemy) => {
     attackUser
   );
 
-  const [healthWizardUser, healthWizardUserValue] = updateHealth(
-    1,
-    attacker,
-    damaged,
-    attackEnemy
-  );
-
-  if (healthWizardUserValue > 0 && healthWizardEnemyValue > 0) {
-    healthWizardEnemy.textContent = healthWizardEnemyValue;
-    updateHealthBar("enemy", damaged, healthWizardEnemyValue);
+  if (healthWizardEnemyValue > 0) {
+    const [healthWizardUser, healthWizardUserValue] = updateHealth(
+      1,
+      attacker,
+      damaged,
+      attackEnemy
+    );
 
     setTimeout(() => {
-      healthWizardUser.textContent = healthWizardUserValue;
-      updateHealthBar("user", attacker, healthWizardUserValue);
-
-      enabledButtons();
-    }, 1000);
-  } else {
-    if (healthWizardEnemyValue <= 0) {
-      healthWizardEnemy.textContent = 0;
-
-      userVictory(damaged, attacker);
-    } else if (healthWizardUserValue <= 0) {
-      healthWizardUser.textContent = 0;
       healthWizardEnemy.textContent = healthWizardEnemyValue;
+      updateHealthBar("enemy", damaged, healthWizardEnemyValue);
+    }, 5000);
+
+    if (healthWizardUserValue > 0) {
+      setTimeout(() => {
+        healthWizardUser.textContent = healthWizardUserValue;
+        updateHealthBar("user", attacker, healthWizardUserValue);
+
+        enabledButtons();
+      }, 11300);
+    } else {
+      setTimeout(() => {
+        healthWizardEnemy.textContent = healthWizardEnemyValue;
+        updateHealthBar("enemy", damaged, healthWizardEnemyValue);
+      }, 5000);
+
+      setTimeout(() => {
+        healthWizardUser.textContent = 0;
+        updateHealthBar("user", attacker, 0);
+      }, 11300);
 
       enemyVictory(damaged, attacker);
+      setTimeout(() => resetRound(attacker, damaged), 17500);
     }
-
-    setTimeout(() => resetRound(attacker, damaged), 2200);
+  } else {
+    healthWizardEnemy.textContent = 0;
+    userVictory(damaged, attacker);
+    setTimeout(() => resetRound(attacker, damaged), 8500);
   }
 };
 
 const userVictory = (damaged, attacker) => {
   updateHealthBar("enemy", damaged, 0);
   showHearts("enemy");
-  setTimeout(() => showAlert("enemy", attacker, "Gana", "Round"), 800);
+  showImageDead(damaged);
+
+  setTimeout(() => {
+    showAlert("enemy", attacker, "Gana", "Round");
+  }, 5000);
 };
 
 const enemyVictory = (damaged, attacker) => {
-  updateHealthBar("user", attacker, 0);
-  showHearts("user");
-  setTimeout(() => showAlert("user", damaged, "Pierde", "Round"), 800);
+  setTimeout(() => {
+    showAlert("user", damaged, "Pierde", "Round");
+  }, 13000);
+
+  setTimeout(() => {
+    updateHealthBar("user", attacker, 0);
+    showHearts("user");
+    showImageDead(attacker);
+  }, 11300);
+};
+
+const showImageDead = (wizard) => {
+  const wizardImg = document.getElementById(`${wizard}Base`);
+
+  wizardImg.src = `../img/dead/${wizard}Dead.gif`;
+  wizardImg.alt = `${wizard} dead`;
+
+  setTimeout(() => {
+    wizardImg.src = `../img/wizardsBase/${wizard}Base.gif`;
+    wizardImg.alt = wizard;
+  }, 3200);
 };
 
 const disabledButtons = () => {
@@ -255,13 +340,19 @@ const showAlert = (player, wizard, result, type) => {
   Swal.fire({
     title: `Vencedor ${wizard}`,
     text: `El usuario ${result} el ${type}`,
+    color: "#fff",
     imageUrl: `../img/wizards/${wizard}.gif`,
     imageWidth: 80,
     imageHeight: 80,
     imageAlt: `Wizard ${wizard}`,
+    allowOutsideClick: false,
   }).then(() => {
     setTimeout(() => {
-      if (lives <= 0) showAlert("user", wizard, result, "Combate");
+      if (lives <= 0) {
+        disabledButtons();
+        showAlert("user", wizard, result, "Combate");
+      }
+
       return;
     }, 500);
   });
