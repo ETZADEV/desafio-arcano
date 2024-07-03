@@ -2,9 +2,11 @@ import { attacksList, damageWizard, health } from "./wizards.js";
 
 const initGame = () => {
   const selectWizard = document.getElementById("select-wizard");
+  const btnReset = document.getElementById("btn-reset");
 
   selectWizard.addEventListener("click", selectWizards);
   selectAttackUser();
+  btnReset.addEventListener("click", resetGame);
 };
 
 const selectWizards = () => {
@@ -241,35 +243,35 @@ const validateWinner = (damaged, attacker, attackUser, attackEnemy) => {
       }, 11300);
 
       enemyVictory(damaged, attacker);
-      setTimeout(() => resetRound(attacker, damaged), 17500);
     }
   } else {
-    healthWizardEnemy.textContent = 0;
+    setTimeout(() => (healthWizardEnemy.textContent = 0), 1000);
     userVictory(damaged, attacker);
-    setTimeout(() => resetRound(attacker, damaged), 8500);
   }
 };
 
 const userVictory = (damaged, attacker) => {
-  updateHealthBar("enemy", damaged, 0);
-  showHearts("enemy");
-  showImageDead(damaged);
+  setTimeout(() => {
+    updateHealthBar("enemy", damaged, 0);
+    showHearts("enemy");
+    showImageDead(damaged);
+  }, 1000);
 
   setTimeout(() => {
-    showAlert("enemy", attacker, "Gana", "Round");
+    showAlert("enemy", attacker, "Gana", "Round", attacker, damaged);
   }, 5000);
 };
 
 const enemyVictory = (damaged, attacker) => {
   setTimeout(() => {
-    showAlert("user", damaged, "Pierde", "Round");
-  }, 13000);
-
-  setTimeout(() => {
     updateHealthBar("user", attacker, 0);
     showHearts("user");
     showImageDead(attacker);
   }, 11300);
+
+  setTimeout(() => {
+    showAlert("user", damaged, "Pierde", "Round", attacker, damaged);
+  }, 13000);
 };
 
 const showImageDead = (wizard) => {
@@ -334,7 +336,7 @@ const livesPlayer = (player) => {
   return lives;
 };
 
-const showAlert = (player, wizard, result, type) => {
+const showAlert = (player, wizard, result, type, attacker, damaged) => {
   let lives = livesPlayer(player);
   const jsConfetti = new JSConfetti();
 
@@ -352,9 +354,14 @@ const showAlert = (player, wizard, result, type) => {
   }).then(() => {
     setTimeout(() => {
       if (lives == 0) {
+        player == "user" ? saveVictories("enemy") : saveVictories("user");
+
         lives = updateLives("user");
-        disabledButtons();
         showAlert("user", wizard, result, "Combate");
+        showBtnReset();
+        disabledButtons();
+      } else {
+        resetRound(attacker, damaged);
       }
 
       return;
@@ -382,6 +389,24 @@ const resetHealthBarRound = () => {
 
   healthUserBar.style.width = "100%";
   healthEnemyBar.style.width = "100%";
+};
+
+const showBtnReset = () => {
+  const btnReset = document.getElementById("btn-reset");
+
+  btnReset.style.display = "inline-block";
+};
+
+const resetGame = () => {
+  location.reload();
+};
+
+const saveVictories = (player) => {
+  let victories = sessionStorage.getItem(`${player}-victories`);
+
+  !victories
+    ? sessionStorage.setItem(`${player}-victories`, 1)
+    : sessionStorage.setItem(`${player}-victories`, ++victories);
 };
 
 const random = (max, min) => Math.floor(Math.random() * (max - min + 1) + min);

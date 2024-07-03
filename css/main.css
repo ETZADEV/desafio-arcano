@@ -47,3 +47,9 @@
     display: none;
   }
 }
+
+#reset {
+  & #btn-reset {
+    display: none;
+  }
+}
