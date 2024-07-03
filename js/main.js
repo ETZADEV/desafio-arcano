@@ -335,7 +335,7 @@ const livesPlayer = (player) => {
 };
 
 const showAlert = (player, wizard, result, type) => {
-  const lives = livesPlayer(player);
+  let lives = livesPlayer(player);
   const jsConfetti = new JSConfetti();
 
   jsConfetti.addConfetti();
@@ -351,7 +351,8 @@ const showAlert = (player, wizard, result, type) => {
     allowOutsideClick: false,
   }).then(() => {
     setTimeout(() => {
-      if (lives <= 0) {
+      if (lives == 0) {
+        lives = updateLives("user");
         disabledButtons();
         showAlert("user", wizard, result, "Combate");
       }
