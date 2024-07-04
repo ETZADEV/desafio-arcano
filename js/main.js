@@ -13,6 +13,7 @@ const selectWizards = () => {
   selectWizardUser();
   selectWizardEnemy();
   disabledBtnSelect();
+  hideSelectWizard();
   showLives();
 };
 
@@ -41,6 +42,12 @@ const selectWizardEnemy = () => {
 const disabledBtnSelect = () => {
   const selectWizard = document.getElementById("select-wizard");
   selectWizard.disabled = true;
+};
+
+const hideSelectWizard = () => {
+  const selectWizard = document.getElementById("select-wizards");
+
+  selectWizard.style.display = "none";
 };
 
 const showWizard = (selected, wizard) => {
