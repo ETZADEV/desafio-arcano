@@ -1,4 +1,4 @@
-import { attacksList, damageWizard, health } from "./wizards.js";
+import { attacksList, damageWizard, health, random } from "./utils.js";
 
 const initGame = () => {
   const selectWizard = document.getElementById("select-wizard");
@@ -14,6 +14,7 @@ const selectWizards = () => {
   selectWizardEnemy();
   disabledBtnSelect();
   showLives();
+  showVictories();
 };
 
 const selectWizardUser = () => {
@@ -409,6 +410,22 @@ const saveVictories = (player) => {
     : sessionStorage.setItem(`${player}-victories`, ++victories);
 };
 
-const random = (max, min) => Math.floor(Math.random() * (max - min + 1) + min);
+const getVictories = (player) => {
+  let victories = sessionStorage.getItem(`${player}-victories`);
+
+  return victories ? victories : 0;
+};
+
+const showVictories = () => {
+  const results = document.getElementById("results");
+  const victories = document.getElementById("victories-label");
+  const lost = document.getElementById("lost-label");
+  const victoriesUser = getVictories("user");
+  const victoriesEnemy = getVictories("enemy");
+
+  results.style.display = "block";
+  victories.innerHTML = victoriesUser;
+  lost.innerHTML = victoriesEnemy;
+};
 
 window.addEventListener("load", initGame);

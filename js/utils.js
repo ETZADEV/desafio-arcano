@@ -98,4 +98,6 @@ const health = (wizard) => {
   return lifeWizards[wizard];
 };
 
-export { attacksList, damageWizard, health };
+const random = (max, min) => Math.floor(Math.random() * (max - min + 1) + min);
+
+export { attacksList, damageWizard, health, random };
