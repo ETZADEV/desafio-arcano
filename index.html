@@ -15,97 +15,178 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
   </head>
-  <body class="body">
-    <h1>Desafió Arcano! 💧🔥🌱💨</h1>
+  <body>
+    <main class="game">
+      <h1 class="game__title">Desafió Arcano</h1>
 
-    <section id="select-wizards">
-      <h2>Elige a tu mago aliado</h2>
+      <section id="select-wizards" class="select-wizards">
+        <h2 class="select-wizards__title">Decide quién será tu mago aliado</h2>
 
-      <input type="radio" name="wizards" id="magd" value="Magd" checked />
-      <label for="magd">
-        <img src="./img/wizards/Magd.gif" alt="water wizard" />
-        Magd
-      </label>
-      <br />
+        <div class="select-wizards__cards">
+          <div
+            class="select-wizards__card select-wizards__card--selected"
+            wizard="Magd"
+          >
+            <input
+              type="radio"
+              name="wizards"
+              id="magd"
+              class="select-wizards__input"
+              value="Magd"
+              checked
+            />
+            <label class="select-wizards__label" for="magd">
+              <img
+                src="./img/wizards/Magd.gif"
+                alt="water wizard"
+                class="select-wizards__img-wizard"
+              />
+              Magd
+            </label>
+            <div
+              class="select-wizards__container-img"
+              style="--initial: #003564; --end: #016ca0"
+            >
+              <img
+                src="./img/elements/water.png"
+                alt="Water"
+                class="select-wizards__img-type"
+              />
+            </div>
+          </div>
 
-      <input type="radio" name="wizards" id="flamewalker" value="Flamewalker" />
-      <label for="flamewalker">
-        <img src="./img/wizards/Flamewalker.gif" alt="fire wizard" />
-        Flamewalker
-      </label>
-      <br />
+          <div class="select-wizards__card" wizard="Flamewalker">
+            <input
+              type="radio"
+              name="wizards"
+              id="flamewalker"
+              class="select-wizards__input"
+              value="Flamewalker"
+            />
+            <label class="select-wizards__label" for="flamewalker">
+              <img
+                src="./img/wizards/Flamewalker.gif"
+                alt="fire wizard"
+                class="select-wizards__img-wizard"
+              />
+              Flamewalker
+            </label>
+            <div
+              class="select-wizards__container-img"
+              style="--initial: #b40e22; --end: #dc466b"
+            >
+              <img
+                src="./img/elements/fire.png"
+                alt="Fire"
+                class="select-wizards__img-type"
+              />
+            </div>
+          </div>
 
-      <input type="radio" name="wizards" id="stoneheart" value="Stoneheart" />
-      <label for="stoneheart">
-        <img src="./img/wizards/Stoneheart.gif" alt="earth wizard" />
-        Stoneheart
-      </label>
-      <br />
+          <div class="select-wizards__card" wizard="Stoneheart">
+            <input
+              type="radio"
+              name="wizards"
+              id="stoneheart"
+              class="select-wizards__input"
+              value="Stoneheart"
+            />
+            <label class="select-wizards__label" for="stoneheart">
+              <img
+                src="./img/wizards/Stoneheart.gif"
+                alt="earth wizard"
+                class="select-wizards__img-wizard"
+              />
+              Stoneheart
+            </label>
+            <div
+              class="select-wizards__container-img"
+              style="--initial: #673514; --end: #a7551b"
+            >
+              <img
+                src="./img/elements/earth.png"
+                alt="Earth"
+                class="select-wizards__img-type"
+              />
+            </div>
+          </div>
 
-      <input type="radio" name="wizards" id="whisperwind" value="Whisperwind" />
-      <label for="whisperwind">
-        <img src="./img/wizards/Whisperwind.gif" alt="wind wizard" />
-        Whisperwind
-      </label>
-      <br />
-
-      <button type="button" id="select-wizard">seleccionar</button>
-    </section>
-
-    <section id="results">
-      <figure id="victories">
-        <img src="./img/results/winner.png" alt="winner icon" />
-        <figcaption id="victories-label"></figcaption>
-      </figure>
-
-      <figure id="lost">
-        <img src="./img/results/lost.png" alt="lost icon" />
-        <figcaption id="lost-label"></figcaption>
-      </figure>
-    </section>
-
-    <section id="lives">
-      <div id="lives-user">
-        <span id="user-wizard" lives="3"></span>
-
-        <div id="health-user-container">
-          <div id="health-user-bar"></div>
+          <div class="select-wizards__card" wizard="Whisperwind">
+            <input
+              type="radio"
+              name="wizards"
+              id="whisperwind"
+              class="select-wizards__input"
+              value="Whisperwind"
+            />
+            <label class="select-wizards__label" for="whisperwind">
+              <img
+                src="./img/wizards/Whisperwind.gif"
+                alt="wind wizard"
+                class="select-wizards__img-wizard"
+              />
+              Whisperwind
+            </label>
+            <div
+              class="select-wizards__container-img"
+              style="--initial: #00967d; --end: #00d9b4"
+            >
+              <img
+                src="./img/elements/wind.png"
+                alt="Wind"
+                class="select-wizards__img-type"
+              />
+            </div>
+          </div>
         </div>
 
-        <div id="hearts-user">
-          <img src="./img/lives/life.png" alt="Life" id="life-user-1" />
-          <img src="./img/lives/life.png" alt="Life" id="life-user-2" />
-          <img src="./img/lives/life.png" alt="Life" id="life-user-3" />
+        <button type="button" id="select-wizard" class="select-wizards__button">
+          seleccionar
+        </button>
+      </section>
+
+      <section id="lives">
+        <div id="lives-user">
+          <span id="user-wizard" lives="3"></span>
+
+          <div id="health-user-container">
+            <div id="health-user-bar"></div>
+          </div>
+
+          <div id="hearts-user">
+            <img src="./img/lives/life.png" alt="Life" id="life-user-1" />
+            <img src="./img/lives/life.png" alt="Life" id="life-user-2" />
+            <img src="./img/lives/life.png" alt="Life" id="life-user-3" />
+          </div>
         </div>
-      </div>
 
-      <div id="lives-enemy">
-        <span id="enemy-wizard" lives="3"></span>
+        <div id="lives-enemy">
+          <span id="enemy-wizard" lives="3"></span>
 
-        <div id="health-enemy-container">
-          <div id="health-enemy-bar"></div>
+          <div id="health-enemy-container">
+            <div id="health-enemy-bar"></div>
+          </div>
+
+          <div id="hearts-enemy">
+            <img src="./img/lives/life.png" alt="Life" id="life-enemy-1" />
+            <img src="./img/lives/life.png" alt="Life" id="life-enemy-2" />
+            <img src="./img/lives/life.png" alt="Life" id="life-enemy-3" />
+          </div>
         </div>
+      </section>
 
-        <div id="hearts-enemy">
-          <img src="./img/lives/life.png" alt="Life" id="life-enemy-1" />
-          <img src="./img/lives/life.png" alt="Life" id="life-enemy-2" />
-          <img src="./img/lives/life.png" alt="Life" id="life-enemy-3" />
-        </div>
-      </div>
-    </section>
+      <section id="select-attack">
+        <p>
+          <button type="button" id="btn-attack1">1</button>
+          <button type="button" id="btn-attack2">2</button>
+        </p>
+      </section>
 
-    <section id="select-attack">
-      <h2>Elige tu ataque</h2>
-      <p>
-        <button type="button" id="btn-attack1">1</button>
-        <button type="button" id="btn-attack2">2</button>
-      </p>
-    </section>
+      <section id="messages"></section>
 
-    <section id="messages"></section>
-
-    <section id="reset">
-      <button type="button" id="btn-reset">Reiniciar juego</button>
-    </section>
+      <section id="reset">
+        <button type="button" id="btn-reset">Reiniciar juego</button>
+      </section>
+    </main>
   </body>
 </html>

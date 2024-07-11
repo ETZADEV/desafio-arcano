@@ -4,6 +4,8 @@ const initGame = () => {
   const selectWizard = document.getElementById("select-wizard");
   const btnReset = document.getElementById("btn-reset");
 
+  changeClassCard();
+
   selectWizard.addEventListener("click", selectWizards);
   selectAttackUser();
   btnReset.addEventListener("click", resetGame);
@@ -13,8 +15,36 @@ const selectWizards = () => {
   selectWizardUser();
   selectWizardEnemy();
   disabledBtnSelect();
+  hideSelectWizard();
   showLives();
   showVictories();
+};
+
+const getCardsWizards = () =>
+  document.querySelectorAll(".select-wizards__card");
+
+const getWizardInput = () => document.getElementsByName("wizards");
+
+const changeClassCard = () => {
+  const cards = getCardsWizards();
+  const inputs = getWizardInput();
+
+  inputs.forEach((input) => {
+    input.addEventListener("change", () => {
+      for (let i of inputs) {
+        if (i.checked) {
+          cards.forEach((card) => {
+            card.classList.remove("select-wizards__card--selected");
+            const wizard = card.getAttribute("wizard");
+
+            if (i.value == wizard) {
+              card.classList.add("select-wizards__card--selected");
+            }
+          });
+        }
+      }
+    });
+  });
 };
 
 const selectWizardUser = () => {
@@ -42,6 +72,12 @@ const selectWizardEnemy = () => {
 const disabledBtnSelect = () => {
   const selectWizard = document.getElementById("select-wizard");
   selectWizard.disabled = true;
+};
+
+const hideSelectWizard = () => {
+  const selectWizard = document.getElementById("select-wizards");
+
+  selectWizard.style.display = "none";
 };
 
 const showWizard = (selected, wizard) => {
