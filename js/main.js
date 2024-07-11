@@ -459,9 +459,11 @@ const showVictories = () => {
   const victoriesUser = getVictories("user");
   const victoriesEnemy = getVictories("enemy");
 
-  results.style.display = "block";
-  victories.innerHTML = victoriesUser;
-  lost.innerHTML = victoriesEnemy;
+  if (victoriesUser !== 0 || victoriesEnemy !== 0) {
+    results.style.display = "block";
+    victories.innerHTML = victoriesUser;
+    lost.innerHTML = victoriesEnemy;
+  }
 };
 
 window.addEventListener("load", initGame);
