@@ -39,18 +39,18 @@
               <img
                 src="./img/wizards/Magd.gif"
                 alt="water wizard"
-                class="select-wizards__img-wizard"
+                class="select-wizards__image-wizard"
               />
               Magd
             </label>
             <div
-              class="select-wizards__container-img"
+              class="select-wizards__container-image"
               style="--initial: #003564; --end: #016ca0"
             >
               <img
                 src="./img/elements/water.png"
                 alt="Water"
-                class="select-wizards__img-type"
+                class="select-wizards__image-type"
               />
             </div>
           </div>
@@ -67,18 +67,18 @@
               <img
                 src="./img/wizards/Flamewalker.gif"
                 alt="fire wizard"
-                class="select-wizards__img-wizard"
+                class="select-wizards__image-wizard"
               />
               Flamewalker
             </label>
             <div
-              class="select-wizards__container-img"
+              class="select-wizards__container-image"
               style="--initial: #b40e22; --end: #dc466b"
             >
               <img
                 src="./img/elements/fire.png"
                 alt="Fire"
-                class="select-wizards__img-type"
+                class="select-wizards__image-type"
               />
             </div>
           </div>
@@ -95,18 +95,18 @@
               <img
                 src="./img/wizards/Stoneheart.gif"
                 alt="earth wizard"
-                class="select-wizards__img-wizard"
+                class="select-wizards__image-wizard"
               />
               Stoneheart
             </label>
             <div
-              class="select-wizards__container-img"
+              class="select-wizards__container-image"
               style="--initial: #673514; --end: #a7551b"
             >
               <img
                 src="./img/elements/earth.png"
                 alt="Earth"
-                class="select-wizards__img-type"
+                class="select-wizards__image-type"
               />
             </div>
           </div>
@@ -123,18 +123,18 @@
               <img
                 src="./img/wizards/Whisperwind.gif"
                 alt="wind wizard"
-                class="select-wizards__img-wizard"
+                class="select-wizards__image-wizard"
               />
               Whisperwind
             </label>
             <div
-              class="select-wizards__container-img"
+              class="select-wizards__container-image"
               style="--initial: #00967d; --end: #00d9b4"
             >
               <img
                 src="./img/elements/wind.png"
                 alt="Wind"
-                class="select-wizards__img-type"
+                class="select-wizards__image-type"
               />
             </div>
           </div>
@@ -145,44 +145,84 @@
         </button>
       </section>
 
-      <section id="results">
-        <figure id="victories">
-          <img src="./img/results/winner.png" alt="winner icon" />
-          <figcaption id="victories-label"></figcaption>
-        </figure>
-
-        <figure id="lost">
-          <img src="./img/results/lost.png" alt="lost icon" />
-          <figcaption id="lost-label"></figcaption>
-        </figure>
+      <section id="results" class="results">
+        <span id="victories-user" class="results__title results__title-user">
+        </span>
+        <span id="victories-enemy" class="results__title results__title-enemy">
+        </span>
       </section>
 
-      <section id="lives">
-        <div id="lives-user">
-          <span id="user-wizard" lives="3"></span>
+      <section id="lives" class="lives">
+        <div id="lives-user" class="lives__player lives__player-user">
+          <div class="lives__details lives__details-user">
+            <span id="user-wizard" class="lives__wizard-name" lives="3"></span>
 
-          <div id="health-user-container">
-            <div id="health-user-bar"></div>
-          </div>
+            <div id="hearts-user">
+              <img
+                src="./img/lives/life.png"
+                alt="Life"
+                id="life-user-1"
+                class="lives__heart-image"
+              />
+              <img
+                src="./img/lives/life.png"
+                alt="Life"
+                id="life-user-2"
+                class="lives__heart-image"
+              />
+              <img
+                src="./img/lives/life.png"
+                alt="Life"
+                id="life-user-3"
+                class="lives__heart-image"
+              />
+            </div>
 
-          <div id="hearts-user">
-            <img src="./img/lives/life.png" alt="Life" id="life-user-1" />
-            <img src="./img/lives/life.png" alt="Life" id="life-user-2" />
-            <img src="./img/lives/life.png" alt="Life" id="life-user-3" />
+            <div id="health-user-container" class="lives__health">
+              <div id="health-user-bar" class="lives__health-bar"></div>
+            </div>
           </div>
         </div>
 
-        <div id="lives-enemy">
-          <span id="enemy-wizard" lives="3"></span>
+        <div class="versus">
+          <img
+            src="./img/versus/versus.png"
+            alt="versus icon"
+            class="versus__image"
+          />
+        </div>
 
-          <div id="health-enemy-container">
-            <div id="health-enemy-bar"></div>
-          </div>
+        <div id="lives-enemy" class="lives__player lives__player-enemy">
+          <div class="lives__details lives__details-enemy">
+            <span id="enemy-wizard" class="lives__wizard-name" lives="3"></span>
 
-          <div id="hearts-enemy">
-            <img src="./img/lives/life.png" alt="Life" id="life-enemy-1" />
-            <img src="./img/lives/life.png" alt="Life" id="life-enemy-2" />
-            <img src="./img/lives/life.png" alt="Life" id="life-enemy-3" />
+            <div id="hearts-enemy" class="lives__player--rotating">
+              <img
+                src="./img/lives/life.png"
+                alt="Life"
+                id="life-enemy-1"
+                class="lives__heart-image"
+              />
+              <img
+                src="./img/lives/life.png"
+                alt="Life"
+                id="life-enemy-2"
+                class="lives__heart-image"
+              />
+              <img
+                src="./img/lives/life.png"
+                alt="Life"
+                id="life-enemy-3"
+                class="lives__heart-image"
+              />
+            </div>
+
+            <div
+              id="health-enemy-container"
+              class="lives__health lives__player--rotating"
+            >
+              <div id="health-enemy-bar" class="lives__health-bar"></div>
+            </div>
           </div>
         </div>
       </section>

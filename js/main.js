@@ -15,6 +15,7 @@ const selectWizards = () => {
   selectWizardUser();
   selectWizardEnemy();
   disabledBtnSelect();
+  hideGameTitle();
   hideSelectWizard();
   showLives();
   showVictories();
@@ -74,6 +75,12 @@ const disabledBtnSelect = () => {
   selectWizard.disabled = true;
 };
 
+const hideGameTitle = () => {
+  const title = document.querySelector(".game__title");
+
+  title.style.display = "none";
+};
+
 const hideSelectWizard = () => {
   const selectWizard = document.getElementById("select-wizards");
 
@@ -87,6 +94,10 @@ const showWizard = (selected, wizard) => {
   wizardImg.src = `./img/wizardsBase/${wizard}Base.gif`;
   wizardImg.id = `${wizard}Base`;
   wizardImg.alt = wizard;
+
+  selected == "enemy"
+    ? (wizardImg.className = "lives__player--rotating lives__image ")
+    : (wizardImg.className = "lives__image");
 
   selectedWizard.prepend(wizardImg);
 };
@@ -214,6 +225,11 @@ const showHealth = (player, wizard, id) => {
 
   wizardHealth.id = `${wizard}-${id}`;
   wizardHealth.textContent = healthWizard;
+  player == "enemy"
+    ? (wizardHealth.className =
+        "lives__health-value lives__health-value--enemy")
+    : (wizardHealth.className =
+        "lives__health-value lives__health-value--user");
 
   healthContainer.appendChild(wizardHealth);
 };
@@ -226,6 +242,22 @@ const updateHealthBar = (player, wizard, healthWizard) => {
   percent <= 0
     ? (healthPlayer.style.width = `0%`)
     : (healthPlayer.style.width = `${percent}%`);
+
+  changeColorBar(percent, healthPlayer);
+};
+
+const changeColorBar = (percent, healthPlayer) => {
+  if (percent <= 70 && percent > 50) {
+    healthPlayer.style.backgroundColor = "#c7520a";
+  }
+
+  if (percent <= 50 && percent > 20) {
+    healthPlayer.style.backgroundColor = "#b93303";
+  }
+
+  if (percent <= 20) {
+    healthPlayer.style.backgroundColor = "#ff0c0c";
+  }
 };
 
 const updateHealth = (id, damaged, attacker, attack) => {
@@ -342,7 +374,7 @@ const enabledButtons = () => {
 const showLives = () => {
   const lives = document.getElementById("lives");
 
-  lives.style.display = "inline";
+  lives.style.display = "flex";
 };
 
 const updateLives = (player) => {
@@ -363,6 +395,7 @@ const showHearts = (player) => {
     const img = imgLives[i - 1];
 
     img.src = "./img/lives/death.png";
+    img.className = "lives__heart-death-image";
   }
 };
 
@@ -426,6 +459,8 @@ const resetHealthBarRound = () => {
 
   healthUserBar.style.width = "100%";
   healthEnemyBar.style.width = "100%";
+  healthUserBar.style.backgroundColor = "#3f9878";
+  healthEnemyBar.style.backgroundColor = "#3f9878";
 };
 
 const showBtnReset = () => {
@@ -454,15 +489,15 @@ const getVictories = (player) => {
 
 const showVictories = () => {
   const results = document.getElementById("results");
-  const victories = document.getElementById("victories-label");
-  const lost = document.getElementById("lost-label");
+  const spanVictoriesUser = document.getElementById("victories-user");
+  const spanVictoriesEnemy = document.getElementById("victories-enemy");
   const victoriesUser = getVictories("user");
   const victoriesEnemy = getVictories("enemy");
 
   if (victoriesUser !== 0 || victoriesEnemy !== 0) {
     results.style.display = "block";
-    victories.innerHTML = victoriesUser;
-    lost.innerHTML = victoriesEnemy;
+    spanVictoriesUser.innerHTML = victoriesUser;
+    spanVictoriesEnemy.innerHTML = victoriesEnemy;
   }
 };
 
