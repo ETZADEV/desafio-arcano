@@ -162,8 +162,8 @@ const showAttacks = (wizard) => {
   attack1.setAttribute("value", attackValue1);
   attack2.setAttribute("value", attackValue2);
 
-  attack1Image.src = `../img/iconAttacks/${attackValue1.replace(" ", "-")}.png`;
-  attack2Image.src = `../img/iconAttacks/${attackValue2.replace(" ", "-")}.png`;
+  attack1Image.src = `./img/iconAttacks/${attackValue1.replace(" ", "-")}.png`;
+  attack2Image.src = `./img/iconAttacks/${attackValue2.replace(" ", "-")}.png`;
 
   attack1Image.alt = attackValue1;
   attack2Image.alt = attackValue2;
@@ -185,7 +185,7 @@ const showRound = () => {
 
   Swal.fire({
     title: "Fight!",
-    imageUrl: `../img/rounds/round-${round}.png`,
+    imageUrl: `./img/rounds/round-${round}.png`,
     imageWidth: 200,
     imageAlt: `Round ${round}`,
     timer: 3000,
@@ -194,7 +194,7 @@ const showRound = () => {
 };
 
 const playAudio = (folder, sound) => {
-  const audio = new Audio(`../sounds/${folder}/${sound}.mp3`);
+  const audio = new Audio(`./sounds/${folder}/${sound}.mp3`);
 
   audio.play();
 };

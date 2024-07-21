@@ -146,6 +146,7 @@
 }
 
 .results {
+  display: none;
   position: relative;
   top: 20%;
   height: 10px;
