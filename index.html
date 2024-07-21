@@ -43,10 +43,7 @@
               />
               Magd
             </label>
-            <div
-              class="select-wizards__container-image"
-              style="--initial: #003564; --end: #016ca0"
-            >
+            <div class="select-wizards__container-image" value="Magd">
               <img
                 src="./img/elements/water.png"
                 alt="Water"
@@ -71,10 +68,7 @@
               />
               Flamewalker
             </label>
-            <div
-              class="select-wizards__container-image"
-              style="--initial: #b40e22; --end: #dc466b"
-            >
+            <div class="select-wizards__container-image" value="Flamewalker">
               <img
                 src="./img/elements/fire.png"
                 alt="Fire"
@@ -99,10 +93,7 @@
               />
               Stoneheart
             </label>
-            <div
-              class="select-wizards__container-image"
-              style="--initial: #673514; --end: #a7551b"
-            >
+            <div class="select-wizards__container-image" value="Stoneheart">
               <img
                 src="./img/elements/earth.png"
                 alt="Earth"
@@ -127,10 +118,7 @@
               />
               Whisperwind
             </label>
-            <div
-              class="select-wizards__container-image"
-              style="--initial: #00967d; --end: #00d9b4"
-            >
+            <div class="select-wizards__container-image" value="Whisperwind">
               <img
                 src="./img/elements/wind.png"
                 alt="Wind"
@@ -153,6 +141,7 @@
       </section>
 
       <section id="lives" class="lives">
+        <input type="hidden" id="round" value="1" />
         <div id="lives-user" class="lives__player lives__player-user">
           <div class="lives__details lives__details-user">
             <span id="user-wizard" class="lives__wizard-name" lives="3"></span>
@@ -184,11 +173,11 @@
           </div>
         </div>
 
-        <div class="versus">
+        <div class="lives__versus">
           <img
             src="./img/versus/versus.png"
             alt="versus icon"
-            class="versus__image"
+            class="lives__versus-image"
           />
         </div>
 
@@ -196,7 +185,7 @@
           <div class="lives__details lives__details-enemy">
             <span id="enemy-wizard" class="lives__wizard-name" lives="3"></span>
 
-            <div id="hearts-enemy" class="lives__player--rotating">
+            <div id="hearts-enemy" class="wizard__player--rotating">
               <img
                 src="./img/lives/life.png"
                 alt="Life"
@@ -219,7 +208,7 @@
 
             <div
               id="health-enemy-container"
-              class="lives__health lives__player--rotating"
+              class="lives__health wizard__player--rotating"
             >
               <div id="health-enemy-bar" class="lives__health-bar"></div>
             </div>
@@ -227,17 +216,23 @@
         </div>
       </section>
 
-      <section id="select-attack">
-        <p>
-          <button type="button" id="btn-attack1">1</button>
-          <button type="button" id="btn-attack2">2</button>
-        </p>
+      <section id="combat" class="combat">
+        <h3 id="combat-attack" class="combat__name-attack"></h3>
+        <div id="combat-user" class="combat__player"></div>
+        <div id="combat-enemy" class="combat__player"></div>
       </section>
 
-      <section id="messages"></section>
+      <section id="select-attack" class="select-attack">
+        <button type="button" id="btn-attack1" class="select-attack__button">
+          1
+        </button>
+        <button type="button" id="btn-attack2" class="select-attack__button">
+          2
+        </button>
+      </section>
 
-      <section id="reset">
-        <button type="button" id="btn-reset">Reiniciar juego</button>
+      <section id="reset" class="reset-game">
+        <button type="button" id="btn-reset" class="reset-game__button"">Reiniciar juego</button>
       </section>
     </main>
   </body>

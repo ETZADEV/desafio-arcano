@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Supermercado+One&display=swap");
 
 * {
   padding: 0;
@@ -24,6 +25,7 @@
   padding: 20px;
   height: 100vh;
   background: url(../img/bg.jpg) no-repeat center/cover fixed;
+  overflow: hidden;
 }
 
 .game__title {
@@ -114,7 +116,6 @@
   right: 3%;
   width: 40px;
   height: 45px;
-  background: linear-gradient(180deg, var(--initial) 35%, var(--end) 100%);
   clip-path: polygon(50% 0%, 100% 20%, 100% 80%, 50% 100%, 0 80%, 0 20%);
   box-shadow: inset 0px 0px 14px 5px var(--black);
 }
@@ -146,7 +147,7 @@
 
 .results {
   position: relative;
-  top: 600px;
+  top: 20%;
   height: 10px;
   width: 10px;
   box-shadow: 20px 10px 0 0 var(--secondary-color),
@@ -300,6 +301,7 @@
 .lives {
   display: none;
   justify-content: space-between;
+  height: 19%;
 }
 
 .lives__player {
@@ -327,16 +329,12 @@
   );
 }
 
-.lives__player--rotating {
+.wizard__player--rotating {
   transform: scaleX(-1);
 }
 
 .lives__image {
-  background: linear-gradient(
-    90deg,
-    var(--subtitle-text-color) 0%,
-    var(--secondary-text-color) 100%
-  );
+  background: linear-gradient(90deg, #3dd6f4d1 0%, #0a7ee2 100%);
   border: 2px solid var(--black);
   border-radius: 20px;
 }
@@ -399,38 +397,134 @@
   transform: translate(-50%, -50%) scaleX(-1);
 }
 
-.versus {
+.lives__versus {
   display: flex;
   align-items: center;
   width: 8%;
-  height: 143px;
+  height: 100%;
 }
 
-.versus__image {
+.lives__versus-image {
   width: 100%;
   object-fit: cover;
   filter: drop-shadow(0 0 0.75rem var(--main-text-color));
 }
 
-#select-attack {
-  & #lives-user,
-  & #lives-enemy {
-    & progress {
-      display: none;
-    }
-  }
-
-  & button {
-    display: none;
-  }
-}
-
-#results {
+.combat {
   display: none;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin: 30px 0;
+  height: 60%;
 }
 
-#reset {
-  & #btn-reset {
-    display: none;
-  }
+.combat__name-attack {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  color: transparent;
+  background: transparent;
+  background-clip: text;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: #ffffff8c;
+  font-family: "Supermercado One", sans-serif;
+  font-size: 6rem;
+  opacity: 0;
+  filter: drop-shadow(0 0 4px var(--subtitle-text-color));
+  transition: opacity 0.5s ease;
+}
+
+.combat__player {
+  display: flex;
+  justify-content: center;
+  width: 40%;
+  overflow: hidden;
+}
+
+.combat__image {
+  width: 8.6rem;
+  object-fit: cover;
+}
+
+.combat__image--attack {
+  height: 170px;
+}
+
+.combat__image--attack-user {
+  margin-left: 40%;
+}
+
+.combat__image--attack-enemy {
+  margin-right: 40%;
+}
+
+.select-attack {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  column-gap: 80px;
+  height: 13%;
+  background: #0000009d;
+  border-radius: 20px;
+}
+
+.select-attack__button {
+  position: relative;
+  padding: 5px 10px 5px 35px;
+  background: var(--main-color);
+  color: var(--accent-text-color);
+  font-family: "Supermercado One", sans-serif;
+  font-size: 2rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 20px 10px;
+  transition: 1s ease-in-out;
+}
+
+.select-attack__button:hover {
+  background: var(--secondary-color);
+}
+
+.select-attack__image {
+  position: absolute;
+  top: -2px;
+  left: -26px;
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: 20px 10px;
+}
+
+.reset-game {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 98%;
+  height: 95%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #031038a0;
+  border: 2px solid var(--black);
+  border-radius: 20px;
+}
+
+.reset-game__button {
+  background: var(--main-color);
+  color: var(--accent-text-color);
+  outline: none;
+  font-size: 1.5rem;
+  padding: 10px 20px;
+  cursor: pointer;
+  border: 2px solid var(--main-text-color);
+  border-radius: 20px;
+  transition: 1s ease-in-out;
+}
+
+.reset-game__button:hover {
+  background: var(--main-text-color);
+  color: var(--accent-color);
+  border: 2px solid var(--main-color);
 }

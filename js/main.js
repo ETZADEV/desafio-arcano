@@ -1,14 +1,30 @@
-import { attacksList, damageWizard, health, random } from "./utils.js";
+import { attacksList, damageWizard, health, random, colors } from "./utils.js";
 
 const initGame = () => {
   const selectWizard = document.getElementById("select-wizard");
   const btnReset = document.getElementById("btn-reset");
 
+  setBackgroundColorContainer();
   changeClassCard();
 
   selectWizard.addEventListener("click", selectWizards);
   selectAttackUser();
   btnReset.addEventListener("click", resetGame);
+};
+
+const setBackgroundColorContainer = () => {
+  const containers = document.querySelectorAll(
+    ".select-wizards__container-image"
+  );
+
+  containers.forEach((container) => {
+    const wizard = container.getAttribute("value");
+
+    container.style.backgroundImage = `linear-gradient(180deg, ${colors(
+      wizard,
+      "initial"
+    )} 35%, ${colors(wizard, "end")} 100%)`;
+  });
 };
 
 const selectWizards = () => {
@@ -18,7 +34,9 @@ const selectWizards = () => {
   hideGameTitle();
   hideSelectWizard();
   showLives();
+  showCombat();
   showVictories();
+  showRound();
 };
 
 const getCardsWizards = () =>
@@ -54,7 +72,8 @@ const selectWizardUser = () => {
   ).value;
   const userWizard = document.getElementById("user-wizard");
 
-  showWizard("user", wizardUser);
+  showWizard("user", wizardUser, 1);
+  showWizardCombat("user", wizardUser, 1);
   userWizard.innerHTML = wizardUser;
   showAttacks(wizardUser.toLowerCase());
   showHealth("user", wizardUser, 1);
@@ -65,7 +84,8 @@ const selectWizardEnemy = () => {
   const wizards = ["Magd", "Flamewalker", "Stoneheart", "Whisperwind"];
   const wizardSelected = wizards[random(3, 0)];
 
-  showWizard("enemy", wizardSelected);
+  showWizard("enemy", wizardSelected, 2);
+  showWizardCombat("enemy", wizardSelected, 2);
   enemyWizard.innerHTML = wizardSelected;
   showHealth("enemy", wizardSelected, 2);
 };
@@ -87,38 +107,103 @@ const hideSelectWizard = () => {
   selectWizard.style.display = "none";
 };
 
-const showWizard = (selected, wizard) => {
-  const selectedWizard = document.getElementById(`lives-${selected}`);
+const showCombat = () => {
+  const combat = document.getElementById("combat");
+  const selectAttack = document.getElementById("select-attack");
+
+  combat.style.display = "flex";
+  selectAttack.style.display = "flex";
+};
+
+const showWizard = (player, wizard, id) => {
+  const containerWizard = document.getElementById(`lives-${player}`);
   const wizardImg = document.createElement("img");
 
   wizardImg.src = `./img/wizardsBase/${wizard}Base.gif`;
-  wizardImg.id = `${wizard}Base`;
+  wizardImg.id = `${wizard}Base-${id}`;
   wizardImg.alt = wizard;
 
-  selected == "enemy"
-    ? (wizardImg.className = "lives__player--rotating lives__image ")
+  player == "enemy"
+    ? (wizardImg.className = "wizard__player--rotating lives__image ")
     : (wizardImg.className = "lives__image");
 
-  selectedWizard.prepend(wizardImg);
+  containerWizard.prepend(wizardImg);
+};
+
+const showWizardCombat = (player, wizard, id) => {
+  const containerWizard = document.getElementById(`combat-${player}`);
+  const combatWizardImage = document.createElement("img");
+
+  combatWizardImage.src = `./img/wizards/${wizard}.gif`;
+  combatWizardImage.id = `combat-${wizard}-${id}`;
+  combatWizardImage.alt = `wizard ${wizard}`;
+
+  player == "enemy"
+    ? (combatWizardImage.className = "combat__image wizard__player--rotating")
+    : (combatWizardImage.className = "combat__image ");
+
+  containerWizard.appendChild(combatWizardImage);
 };
 
 const showAttacks = (wizard) => {
   const attack1 = document.getElementById("btn-attack1");
   const attack2 = document.getElementById("btn-attack2");
+  const attack1Image = document.createElement("img");
+  const attack2Image = document.createElement("img");
 
-  let attacks = attacksList();
+  const attacks = attacksList();
 
-  let attackValue1 = attacks[wizard][0];
-  let attackValue2 = attacks[wizard][1];
+  const attackValue1 = attacks[wizard][0];
+  const attackValue2 = attacks[wizard][1];
 
   attack1.style.display = "inline-block";
   attack2.style.display = "inline-block";
 
-  attack1.innerHTML = attackValue1;
-  attack2.innerHTML = attackValue2;
-
   attack1.setAttribute("value", attackValue1);
   attack2.setAttribute("value", attackValue2);
+
+  attack1Image.src = `../img/iconAttacks/${attackValue1.replace(" ", "-")}.png`;
+  attack2Image.src = `../img/iconAttacks/${attackValue2.replace(" ", "-")}.png`;
+
+  attack1Image.alt = attackValue1;
+  attack2Image.alt = attackValue2;
+
+  attack1Image.classList = "select-attack__image";
+  attack2Image.classList = "select-attack__image";
+
+  attack1.innerHTML = attackValue1;
+  attack1.appendChild(attack1Image);
+
+  attack2.innerHTML = attackValue2;
+  attack2.appendChild(attack2Image);
+};
+
+const showRound = () => {
+  const round = document.getElementById("round").value;
+
+  playAudio("rounds", round);
+
+  Swal.fire({
+    title: "Fight!",
+    imageUrl: `../img/rounds/round-${round}.png`,
+    imageWidth: 200,
+    imageAlt: `Round ${round}`,
+    timer: 3000,
+    showConfirmButton: false,
+  });
+};
+
+const playAudio = (folder, sound) => {
+  const audio = new Audio(`../sounds/${folder}/${sound}.mp3`);
+
+  audio.play();
+};
+
+const updateRound = () => {
+  const round = document.getElementById("round");
+  let roundValue = ++round.value;
+
+  round.value = roundValue;
 };
 
 const selectAttackUser = () => {
@@ -132,7 +217,6 @@ const selectAttackUser = () => {
     const userAttack = attack1.getAttribute("value");
 
     showAttackPlayers(userWizard1, userAttack, enemyWizard, enemyAttack);
-    createMessages(userWizard1, userAttack, enemyWizard, enemyAttack);
     validateWinner(enemyWizard, userWizard1, userAttack, enemyAttack);
   });
 
@@ -142,7 +226,6 @@ const selectAttackUser = () => {
     const userAttack = attack2.getAttribute("value");
 
     showAttackPlayers(userWizard2, userAttack, enemyWizard, enemyAttack);
-    createMessages(userWizard2, userAttack, enemyWizard, enemyAttack);
     validateWinner(enemyWizard, userWizard2, userAttack, enemyAttack);
   });
 };
@@ -157,21 +240,48 @@ const selectAttackEnemy = () => {
   return [enemyWizard, attack];
 };
 
-const showAttack = (wizard, attack, adjective) => {
-  Swal.fire({
-    customClass: {
-      title: "swal2-title",
-    },
-    text: `El mago ${adjective}: ${wizard} ataca con ${attack}`,
-    color: "#fff",
-    imageUrl: `./img/attack/${attack}.gif`,
-    imageWidth: 170,
-    imageHeight: 80,
-    imageAlt: `Attack ${wizard}`,
-    showConfirmButton: false,
-    allowOutsideClick: false,
-    timer: 4000,
-  });
+const showAttackName = (wizard, attack) => {
+  const combatAttack = document.getElementById("combat-attack");
+
+  combatAttack.innerHTML = attack;
+  combatAttack.style.opacity = 1;
+  combatAttack.style.backgroundImage = `linear-gradient(90deg, ${colors(
+    wizard,
+    "initial"
+  )} 0%, ${colors(wizard, "end")} 100%)`;
+
+  setTimeout(() => {
+    combatAttack.style.opacity = 0;
+  }, 4500);
+};
+
+const showAttackCombat = (wizard, id, attack) => {
+  const wizardImage = document.getElementById(`combat-${wizard}-${id}`);
+
+  if (attack) {
+    const attackPlayer = attack.replace(" ", "-");
+
+    wizardImage.src = `./img/attacks/${attackPlayer}.gif`;
+
+    id == 2
+      ? (wizardImage.classList =
+          "combat__image--attack combat__image--attack-enemy wizard__player--rotating")
+      : (wizardImage.classList =
+          "combat__image--attack combat__image--attack-user");
+
+    showAttackName(wizard, attack);
+    playAudio("attacks", attackPlayer);
+  }
+};
+
+const resetShowAttackImg = (wizard, id) => {
+  const wizardImage = document.getElementById(`combat-${wizard}-${id}`);
+
+  wizardImage.src = `./img/wizards/${wizard}.gif`;
+
+  id == 2
+    ? (wizardImage.className = "combat__image wizard__player--rotating")
+    : (wizardImage.className = "combat__image ");
 };
 
 const showAttackPlayers = (
@@ -183,11 +293,14 @@ const showAttackPlayers = (
   const healthEnemy = getHealthPlayer(2, enemyWizard, userWizard, userAttack);
 
   if (healthEnemy > 0) {
-    setTimeout(() => showAttack(userWizard, userAttack, "Aliado"), 500);
-    setTimeout(() => showAttack(enemyWizard, enemyAttack, "Enemigo"), 6500);
+    setTimeout(() => showAttackCombat(userWizard, 1, userAttack), 500);
+    setTimeout(() => resetShowAttackImg(userWizard, 1), 5000);
+    setTimeout(() => showAttackCombat(enemyWizard, 2, enemyAttack), 6500);
+    setTimeout(() => resetShowAttackImg(enemyWizard, 2), 10000);
   }
 
-  setTimeout(() => showAttack(userWizard, userAttack, "Aliado"), 500);
+  setTimeout(() => showAttackCombat(userWizard, 1, userAttack), 500);
+  setTimeout(() => resetShowAttackImg(userWizard, 1), 5000);
 };
 
 const getHealthPlayer = (
@@ -208,14 +321,6 @@ const getHealthPlayer = (
   healthPlayer -= damagePlayer;
 
   return healthPlayer;
-};
-
-const createMessages = (userWizard, userAttack, enemyWizard, enemyAttack) => {
-  const messages = document.getElementById("messages");
-  const message = document.createElement("p");
-  message.textContent = `El mago ${userWizard} ataco con ${userAttack} y el mago ${enemyWizard} ataco con ${enemyAttack}`;
-
-  messages.appendChild(message);
 };
 
 const showHealth = (player, wizard, id) => {
@@ -323,8 +428,8 @@ const userVictory = (damaged, attacker) => {
   setTimeout(() => {
     updateHealthBar("enemy", damaged, 0);
     showHearts("enemy");
-    showImageDead(damaged);
-  }, 1000);
+    showImageDead(damaged, 2);
+  }, 2000);
 
   setTimeout(() => {
     showAlert("enemy", attacker, "Gana", "Round", attacker, damaged);
@@ -335,7 +440,7 @@ const enemyVictory = (damaged, attacker) => {
   setTimeout(() => {
     updateHealthBar("user", attacker, 0);
     showHearts("user");
-    showImageDead(attacker);
+    showImageDead(attacker, 1);
   }, 11300);
 
   setTimeout(() => {
@@ -343,20 +448,27 @@ const enemyVictory = (damaged, attacker) => {
   }, 13000);
 };
 
-const showImageDead = (wizard) => {
-  const wizardImg = document.getElementById(`${wizard}Base`);
+const showImageDead = (wizard, id) => {
+  const wizardImg = document.getElementById(`${wizard}Base-${id}`);
+  const wizardCombatImg = document.getElementById(`combat-${wizard}-${id}`);
 
   wizardImg.src = `./img/dead/${wizard}Dead.gif`;
   wizardImg.alt = `${wizard} dead`;
 
+  wizardCombatImg.src = `./img/dead/${wizard}Dead.gif`;
+  wizardCombatImg.alt = `${wizard} dead`;
+
   setTimeout(() => {
     wizardImg.src = `./img/wizardsBase/${wizard}Base.gif`;
     wizardImg.alt = wizard;
+
+    wizardCombatImg.src = `./img/wizards/${wizard}.gif`;
+    wizardCombatImg.alt = wizard;
   }, 3200);
 };
 
 const disabledButtons = () => {
-  const buttons = document.querySelectorAll("#select-attack > p > button");
+  const buttons = document.querySelectorAll("#select-attack > button");
 
   for (let i = 0; i < buttons.length; i++) {
     buttons[i].disabled = true;
@@ -364,7 +476,7 @@ const disabledButtons = () => {
 };
 
 const enabledButtons = () => {
-  const buttons = document.querySelectorAll("#select-attack > p > button");
+  const buttons = document.querySelectorAll("#select-attack > button");
 
   for (let i = 0; i < buttons.length; i++) {
     buttons[i].disabled = false;
@@ -440,9 +552,11 @@ const showAlert = (player, wizard, result, type, attacker, damaged) => {
 };
 
 const resetRound = (user, enemy) => {
+  updateRound();
   resetHealthRound(user, enemy);
   resetHealthBarRound(user, enemy);
   enabledButtons();
+  setTimeout(() => showRound(), 200);
 };
 
 const resetHealthRound = (user, enemy) => {
@@ -464,9 +578,9 @@ const resetHealthBarRound = () => {
 };
 
 const showBtnReset = () => {
-  const btnReset = document.getElementById("btn-reset");
+  const reset = document.getElementById("reset");
 
-  btnReset.style.display = "inline-block";
+  reset.style.display = "flex";
 };
 
 const resetGame = () => {

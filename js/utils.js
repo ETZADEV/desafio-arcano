@@ -1,8 +1,8 @@
 const attacksList = () => {
-  const magd = ["Burbuja", "Glacial"];
-  const flamewalker = ["Llamarada", "Inferno"];
-  const stoneheart = ["Pedrisco", "Monolito"];
-  const whisperwind = ["Zumbido", "Tornado"];
+  const magd = ["Water Jet", "Freezing"];
+  const flamewalker = ["Fireball", "Fire Blaze"];
+  const stoneheart = ["Earth Bullets", "Boulder Toss"];
+  const whisperwind = ["Slam", "Tornado"];
   const attacks = { magd, flamewalker, stoneheart, whisperwind };
 
   return attacks;
@@ -12,74 +12,74 @@ const damageWizard = (damaged, attacker, attack) => {
   const damage = {
     Magd: {
       Magd: {
-        Burbuja: 100,
-        Glacial: 175,
+        "Water Jet": 300,
+        Freezing: 375,
       },
       Flamewalker: {
-        Llamarada: 375,
-        Inferno: 500,
+        Fireball: 475,
+        "Fire Blaze": 525,
       },
       Stoneheart: {
-        Pedrisco: 250,
-        Monolito: 325,
+        "Earth Bullets": 350,
+        "Boulder Toss": 425,
       },
       Whisperwind: {
-        Zumbido: 200,
-        Tornado: 275,
+        Slam: 300,
+        Tornado: 375,
       },
     },
     Flamewalker: {
       Magd: {
-        Burbuja: 400,
-        Glacial: 550,
+        "Water Jet": 320,
+        Freezing: 450,
       },
       Flamewalker: {
-        Llamarada: 100,
-        Inferno: 175,
+        Fireball: 300,
+        "Fire Blaze": 375,
       },
       Stoneheart: {
-        Pedrisco: 125,
-        Monolito: 200,
+        "Earth Bullets": 325,
+        "Boulder Toss": 400,
       },
       Whisperwind: {
-        Zumbido: 175,
-        Tornado: 225,
+        Slam: 375,
+        Tornado: 425,
       },
     },
     Stoneheart: {
       Magd: {
-        Burbuja: 140,
-        Glacial: 200,
+        "Water Jet": 340,
+        Freezing: 400,
       },
       Flamewalker: {
-        Llamarada: 175,
-        Inferno: 200,
+        Fireball: 375,
+        "Fire Blaze": 440,
       },
       Stoneheart: {
-        Pedrisco: 100,
-        Monolito: 175,
+        "Earth Bullets": 300,
+        "Boulder Toss": 375,
       },
       Whisperwind: {
-        Zumbido: 300,
+        Slam: 350,
         Tornado: 475,
       },
     },
     Whisperwind: {
       Magd: {
-        Burbuja: 150,
-        Glacial: 225,
+        "Water Jet": 350,
+        Freezing: 425,
       },
       Flamewalker: {
-        Llamarada: 175,
-        Inferno: 240,
+        Fireball: 375,
+        "Fire Blaze": 440,
       },
       Stoneheart: {
-        Pedrisco: 350,
-        Monolito: 425,
+        "Earth Bullets": 350,
+        "Boulder Toss": 425,
       },
       Whisperwind: {
-        Zumbido: 100,
-        Tornado: 175,
+        Slam: 300,
+        Tornado: 375,
       },
     },
   };
@@ -100,4 +100,30 @@ const health = (wizard) => {
 
 const random = (max, min) => Math.floor(Math.random() * (max - min + 1) + min);
 
-export { attacksList, damageWizard, health, random };
+const colors = (wizard, position) => {
+  const gradientColors = {
+    Magd: {
+      initial: "#003564",
+      end: "#016ca0",
+    },
+
+    Flamewalker: {
+      initial: "#b40e22",
+      end: "#dc466b",
+    },
+
+    Stoneheart: {
+      initial: "#673514",
+      end: "#a7551b",
+    },
+
+    Whisperwind: {
+      initial: "#00967d",
+      end: "#00d9b4",
+    },
+  };
+
+  return gradientColors[wizard][position];
+};
+
+export { attacksList, damageWizard, health, random, colors };
