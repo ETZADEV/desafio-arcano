@@ -15,6 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
   </head>
+
   <body>
     <main class="game">
       <h1 class="game__title">Desafió Arcano</h1>
@@ -133,106 +134,122 @@
         </button>
       </section>
 
-      <section id="results" class="results">
-        <span id="victories-user" class="results__title results__title-user">
-        </span>
-        <span id="victories-enemy" class="results__title results__title-enemy">
-        </span>
-      </section>
+      <section class="game__combat">
+        <section id="results" class="results">
+          <span
+            id="victories-user"
+            class="results__title results__title-user"
+          ></span>
+          <span
+            id="victories-enemy"
+            class="results__title results__title-enemy"
+          ></span>
+        </section>
 
-      <section id="lives" class="lives">
-        <input type="hidden" id="round" value="1" />
-        <div id="lives-user" class="lives__player lives__player-user">
-          <div class="lives__details lives__details-user">
-            <span id="user-wizard" class="lives__wizard-name" lives="3"></span>
+        <section id="lives" class="lives">
+          <input type="hidden" id="round" value="1" />
+          <div id="lives-user" class="lives__player lives__player-user">
+            <div class="lives__details lives__details-user">
+              <span
+                id="user-wizard"
+                class="lives__wizard-name"
+                lives="3"
+              ></span>
 
-            <div id="hearts-user">
-              <img
-                src="./img/lives/life.png"
-                alt="Life"
-                id="life-user-1"
-                class="lives__heart-image"
-              />
-              <img
-                src="./img/lives/life.png"
-                alt="Life"
-                id="life-user-2"
-                class="lives__heart-image"
-              />
-              <img
-                src="./img/lives/life.png"
-                alt="Life"
-                id="life-user-3"
-                class="lives__heart-image"
-              />
-            </div>
+              <div id="hearts-user">
+                <img
+                  src="./img/lives/life.png"
+                  alt="Life"
+                  id="life-user-1"
+                  class="lives__heart-image"
+                />
+                <img
+                  src="./img/lives/life.png"
+                  alt="Life"
+                  id="life-user-2"
+                  class="lives__heart-image"
+                />
+                <img
+                  src="./img/lives/life.png"
+                  alt="Life"
+                  id="life-user-3"
+                  class="lives__heart-image"
+                />
+              </div>
 
-            <div id="health-user-container" class="lives__health">
-              <div id="health-user-bar" class="lives__health-bar"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="lives__versus">
-          <img
-            src="./img/versus/versus.png"
-            alt="versus icon"
-            class="lives__versus-image"
-          />
-        </div>
-
-        <div id="lives-enemy" class="lives__player lives__player-enemy">
-          <div class="lives__details lives__details-enemy">
-            <span id="enemy-wizard" class="lives__wizard-name" lives="3"></span>
-
-            <div id="hearts-enemy" class="wizard__player--rotating">
-              <img
-                src="./img/lives/life.png"
-                alt="Life"
-                id="life-enemy-1"
-                class="lives__heart-image"
-              />
-              <img
-                src="./img/lives/life.png"
-                alt="Life"
-                id="life-enemy-2"
-                class="lives__heart-image"
-              />
-              <img
-                src="./img/lives/life.png"
-                alt="Life"
-                id="life-enemy-3"
-                class="lives__heart-image"
-              />
-            </div>
-
-            <div
-              id="health-enemy-container"
-              class="lives__health wizard__player--rotating"
-            >
-              <div id="health-enemy-bar" class="lives__health-bar"></div>
+              <div id="health-user-container" class="lives__health">
+                <div id="health-user-bar" class="lives__health-bar"></div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      <section id="combat" class="combat">
-        <h3 id="combat-attack" class="combat__name-attack"></h3>
-        <div id="combat-user" class="combat__player"></div>
-        <div id="combat-enemy" class="combat__player"></div>
-      </section>
+          <div class="lives__versus">
+            <img
+              src="./img/versus/versus.png"
+              alt="versus icon"
+              class="lives__versus-image"
+            />
+          </div>
 
-      <section id="select-attack" class="select-attack">
-        <button type="button" id="btn-attack1" class="select-attack__button">
-          1
-        </button>
-        <button type="button" id="btn-attack2" class="select-attack__button">
-          2
-        </button>
-      </section>
+          <div id="lives-enemy" class="lives__player lives__player-enemy">
+            <div class="lives__details lives__details-enemy">
+              <span
+                id="enemy-wizard"
+                class="lives__wizard-name"
+                lives="3"
+              ></span>
 
-      <section id="reset" class="reset-game">
-        <button type="button" id="btn-reset" class="reset-game__button"">Reiniciar juego</button>
+              <div id="hearts-enemy" class="wizard__player--rotating">
+                <img
+                  src="./img/lives/life.png"
+                  alt="Life"
+                  id="life-enemy-1"
+                  class="lives__heart-image"
+                />
+                <img
+                  src="./img/lives/life.png"
+                  alt="Life"
+                  id="life-enemy-2"
+                  class="lives__heart-image"
+                />
+                <img
+                  src="./img/lives/life.png"
+                  alt="Life"
+                  id="life-enemy-3"
+                  class="lives__heart-image"
+                />
+              </div>
+
+              <div
+                id="health-enemy-container"
+                class="lives__health wizard__player--rotating"
+              >
+                <div id="health-enemy-bar" class="lives__health-bar"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="combat" class="combat">
+          <h3 id="combat-attack" class="combat__name-attack"></h3>
+          <div id="combat-user" class="combat__player"></div>
+          <div id="combat-enemy" class="combat__player"></div>
+        </section>
+
+        <section id="select-attack" class="select-attack">
+          <button type="button" id="btn-attack1" class="select-attack__button">
+            1
+          </button>
+          <button type="button" id="btn-attack2" class="select-attack__button">
+            2
+          </button>
+        </section>
+
+        <section id="reset" class="reset-game">
+          <button type="button" id="btn-reset" class="reset-game__button">
+            Reiniciar juego
+          </button>
+        </section>
       </section>
     </main>
   </body>

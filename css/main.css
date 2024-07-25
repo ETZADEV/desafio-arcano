@@ -146,6 +146,10 @@
   filter: invert(2px);
 }
 
+.game__combat {
+  height: 100vh;
+}
+
 .results {
   display: none;
   position: relative;
@@ -403,7 +407,6 @@
   display: flex;
   align-items: center;
   width: 8%;
-  height: 100%;
 }
 
 .lives__versus-image {
@@ -569,7 +572,7 @@
   }
 }
 
-@media (width < 720px) and (height < 800px) {
+@media (width < 1024px) and (height < 750px), (height < 750px) {
   .game {
     height: 100%;
     overflow: visible;
