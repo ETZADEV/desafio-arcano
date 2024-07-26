@@ -147,7 +147,10 @@
 }
 
 .game__combat {
-  height: 100vh;
+  display: none;
+  height: 94vh;
+  margin: 10px 0;
+  overflow: hidden;
 }
 
 .results {
@@ -307,7 +310,6 @@
 .lives {
   display: none;
   justify-content: space-between;
-  height: 19%;
 }
 
 .lives__player {
@@ -542,6 +544,11 @@
 }
 
 @media (width < 1300px) {
+  .select-wizards__card {
+    width: 230px;
+    height: 200px;
+  }
+
   .game__title {
     font-size: 1.7rem;
     line-height: 1.4;
@@ -572,7 +579,9 @@
   }
 }
 
-@media (width < 1024px) and (height < 750px), (height < 750px) {
+@media (width < 1024px) and (height < 750px),
+  (width < 768px) and (height < 1240px),
+  (height < 750px) {
   .game {
     height: 100%;
     overflow: visible;
@@ -581,5 +590,160 @@
   .select-wizards__title,
   .select-wizards__cards {
     margin-bottom: 20px;
+  }
+}
+
+@media (width >= 1107px) and (height >= 696px) {
+  .game {
+    height: 100vh;
+  }
+}
+
+@media (width <= 1024px) {
+  .select-wizards {
+    margin-top: 22px;
+  }
+
+  .game__combat {
+    margin: 0.5px;
+  }
+
+  .results {
+    transform: scale(0.6);
+  }
+
+  .lives__player {
+    height: 80px;
+  }
+
+  .lives__details {
+    gap: 5px;
+  }
+
+  .lives__wizard-name {
+    font-size: 0.8rem;
+  }
+
+  .lives__heart-image,
+  .lives__heart-death-image {
+    width: 20px;
+  }
+
+  .lives__health {
+    height: 20px;
+  }
+
+  .lives__health-bar {
+    height: 100%;
+  }
+
+  .lives__health-value {
+    margin-top: 1px;
+    font-size: 0.6rem;
+  }
+
+  .combat__image {
+    width: 7rem;
+  }
+
+  .combat__image--attack {
+    height: 152px;
+  }
+
+  .combat__image--attack-user {
+    margin-left: 60%;
+  }
+
+  .combat__image--attack-enemy {
+    margin-right: 60%;
+  }
+
+  .combat__name-attack {
+    font-size: 4rem;
+  }
+
+  .select-attack__button {
+    transform: scale(0.8);
+  }
+}
+
+@media (width <= 668px) {
+  .results {
+    opacity: 0;
+  }
+
+  .lives__versus {
+    display: none;
+  }
+
+  .lives__player {
+    width: calc(100vw - 40px);
+  }
+
+  .lives__player-enemy {
+    position: absolute;
+    bottom: 150px;
+    right: 20px;
+  }
+
+  .combat {
+    align-items: center;
+  }
+
+  .combat__player {
+    width: 60%;
+    overflow: visible;
+  }
+
+  .combat__image--attack-user {
+    margin-left: 100%;
+  }
+
+  .combat__image--attack-enemy {
+    margin-right: 100%;
+  }
+
+  .combat__name-attack {
+    font-size: 2.5rem;
+    transform: translate(-50%, -300%);
+  }
+
+  .select-attack {
+    flex-direction: column;
+    column-gap: 10px;
+    padding: 0 20px 0 45px;
+    height: 17%;
+  }
+}
+
+@media (width <= 460px) {
+  .combat__name-attack {
+    font-size: 1.6rem;
+    transform: translate(-50%, -500%);
+  }
+}
+
+@media (width <= 376px) {
+  .combat__image--attack-user {
+    margin-left: 200%;
+    z-index: 1;
+  }
+
+  .combat__image--attack-enemy {
+    margin-right: 200%;
+  }
+}
+
+@media (width <= 336px) {
+  .select-attack__button {
+    font-size: 1.5rem;
+  }
+
+  .select-attack__image {
+    top: 0;
+    left: -13px;
+    width: 40px;
+    height: 40px;
+    border-radius: 15px 7px;
   }
 }

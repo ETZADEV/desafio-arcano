@@ -33,6 +33,7 @@ const selectWizards = () => {
   disabledBtnSelect();
   hideGameTitle();
   hideSelectWizard();
+  showGameCombat();
   showLives();
   showCombat();
   showVictories();
@@ -105,6 +106,12 @@ const hideSelectWizard = () => {
   const selectWizard = document.getElementById("select-wizards");
 
   selectWizard.style.display = "none";
+};
+
+const showGameCombat = () => {
+  const gameCombat = document.getElementById("game-combat");
+
+  gameCombat.style.display = "block";
 };
 
 const showCombat = () => {

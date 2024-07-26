@@ -134,27 +134,20 @@
         </button>
       </section>
 
-      <section class="game__combat">
+      <section id="game-combat" class="game__combat">
         <section id="results" class="results">
-          <span
-            id="victories-user"
-            class="results__title results__title-user"
-          ></span>
-          <span
+          <p id="victories-user" class="results__title results__title-user"></p>
+          <p
             id="victories-enemy"
             class="results__title results__title-enemy"
-          ></span>
+          ></p>
         </section>
 
         <section id="lives" class="lives">
           <input type="hidden" id="round" value="1" />
           <div id="lives-user" class="lives__player lives__player-user">
             <div class="lives__details lives__details-user">
-              <span
-                id="user-wizard"
-                class="lives__wizard-name"
-                lives="3"
-              ></span>
+              <p id="user-wizard" class="lives__wizard-name" lives="3"></p>
 
               <div id="hearts-user">
                 <img
@@ -193,11 +186,7 @@
 
           <div id="lives-enemy" class="lives__player lives__player-enemy">
             <div class="lives__details lives__details-enemy">
-              <span
-                id="enemy-wizard"
-                class="lives__wizard-name"
-                lives="3"
-              ></span>
+              <p id="enemy-wizard" class="lives__wizard-name" lives="3"></p>
 
               <div id="hearts-enemy" class="wizard__player--rotating">
                 <img
