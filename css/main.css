@@ -467,7 +467,6 @@
 }
 
 .select-attack {
-  display: none;
   justify-content: center;
   align-items: center;
   column-gap: 80px;

@@ -87,43 +87,6 @@ const damageWizard = (damaged, attacker, attack) => {
   return damage[damaged][attacker][attack];
 };
 
-const health = (wizard) => {
-  const lifeWizards = {
-    Magd: 1020,
-    Flamewalker: 1033,
-    Stoneheart: 1010,
-    Whisperwind: 1000,
-  };
-
-  return lifeWizards[wizard];
-};
-
 const random = (max, min) => Math.floor(Math.random() * (max - min + 1) + min);
 
-const colors = (wizard, position) => {
-  const gradientColors = {
-    Magd: {
-      initial: "#003564",
-      end: "#016ca0",
-    },
-
-    Flamewalker: {
-      initial: "#b40e22",
-      end: "#dc466b",
-    },
-
-    Stoneheart: {
-      initial: "#673514",
-      end: "#a7551b",
-    },
-
-    Whisperwind: {
-      initial: "#00967d",
-      end: "#00d9b4",
-    },
-  };
-
-  return gradientColors[wizard][position];
-};
-
-export { attacksList, damageWizard, health, random, colors };
+export { attacksList, damageWizard, random };

@@ -1,16 +1,18 @@
-import { attacksList, damageWizard, health, random, colors } from "./utils.js";
+import { attacksList, damageWizard, random } from "./utils.js";
+import wizards from "./wizards.js";
 
 const initGame = () => {
   const selectWizard = document.getElementById("select-wizard");
   const btnReset = document.getElementById("btn-reset");
 
-  setBackgroundColorContainer();
-  changeClassCard();
+  createCardWizard(wizards);
 
   selectWizard.addEventListener("click", selectWizards);
-  selectAttackUser();
   btnReset.addEventListener("click", resetGame);
 };
+
+const getCharacteristicWizard = (wizard, characteristic) =>
+  wizards[wizard][characteristic];
 
 const setBackgroundColorContainer = () => {
   const containers = document.querySelectorAll(
@@ -19,11 +21,9 @@ const setBackgroundColorContainer = () => {
 
   containers.forEach((container) => {
     const wizard = container.getAttribute("value");
+    const [start, end] = getCharacteristicWizard(wizard, "colors");
 
-    container.style.backgroundImage = `linear-gradient(180deg, ${colors(
-      wizard,
-      "initial"
-    )} 35%, ${colors(wizard, "end")} 100%)`;
+    container.style.backgroundImage = `linear-gradient(180deg, ${start} 35%, ${end} 100%)`;
   });
 };
 
@@ -33,11 +33,76 @@ const selectWizards = () => {
   disabledBtnSelect();
   hideGameTitle();
   hideSelectWizard();
+  selectAttackUser();
   showGameCombat();
   showLives();
   showCombat();
   showVictories();
   showRound();
+};
+
+const createCardWizard = (wizards) => {
+  const cardsContainer = document.getElementById("select-wizards-cards");
+  const data = Object.values(wizards);
+
+  for (let i = 0; i < data.length; i++) {
+    const name = data[i].name;
+    const urlImage = data[i].urlImage;
+    const urlElementImage = data[i].elementImage;
+    const element = data[i].element;
+
+    const card = document.createElement("div");
+    card.classList.add("select-wizards__card");
+    card.setAttribute("wizard", name);
+
+    const input = document.createElement("input");
+    input.setAttribute("type", "radio");
+    input.setAttribute("name", "wizards");
+    input.id = name.toLowerCase();
+    input.classList.add("select-wizards__input");
+    input.setAttribute("value", name);
+
+    const label = document.createElement("label");
+    label.setAttribute("for", name.toLowerCase());
+    label.classList.add("select-wizards__label");
+
+    const image = document.createElement("img");
+    image.src = urlImage;
+    image.setAttribute("alt", `Wizard ${name}`);
+    image.classList.add("select-wizards__image-wizard");
+
+    const p = document.createElement("p");
+    p.innerHTML = name;
+
+    const container = document.createElement("div");
+    container.setAttribute("value", name);
+    container.classList.add("select-wizards__container-image");
+
+    const elementImage = document.createElement("img");
+    elementImage.src = urlElementImage;
+    elementImage.setAttribute("alt", element);
+    elementImage.classList.add("select-wizards__image-type");
+
+    isSelected(i, card, input);
+
+    card.appendChild(input);
+    card.appendChild(label);
+    label.appendChild(image);
+    label.appendChild(p);
+    card.appendChild(container);
+    container.appendChild(elementImage);
+    cardsContainer.appendChild(card);
+
+    setBackgroundColorContainer();
+    changeClassCard();
+  }
+};
+
+const isSelected = (i, card, input) => {
+  if (i === 0) {
+    card.classList.add("select-wizards__card--selected");
+    input.checked = true;
+  }
 };
 
 const getCardsWizards = () =>
@@ -76,8 +141,8 @@ const selectWizardUser = () => {
   showWizard("user", wizardUser, 1);
   showWizardCombat("user", wizardUser, 1);
   userWizard.innerHTML = wizardUser;
-  showAttacks(wizardUser.toLowerCase());
-  showHealth("user", wizardUser, 1);
+  createButtonsAttacks(wizards, wizardUser);
+  showHealth("user", wizardUser, 1, wizards);
 };
 
 const selectWizardEnemy = () => {
@@ -88,7 +153,7 @@ const selectWizardEnemy = () => {
   showWizard("enemy", wizardSelected, 2);
   showWizardCombat("enemy", wizardSelected, 2);
   enemyWizard.innerHTML = wizardSelected;
-  showHealth("enemy", wizardSelected, 2);
+  showHealth("enemy", wizardSelected, 2, wizards);
 };
 
 const disabledBtnSelect = () => {
@@ -152,37 +217,29 @@ const showWizardCombat = (player, wizard, id) => {
   containerWizard.appendChild(combatWizardImage);
 };
 
-const showAttacks = (wizard) => {
-  const attack1 = document.getElementById("btn-attack1");
-  const attack2 = document.getElementById("btn-attack2");
-  const attack1Image = document.createElement("img");
-  const attack2Image = document.createElement("img");
+const createButtonsAttacks = (wizards, wizard) => {
+  const selectAttack = document.getElementById("select-attack");
+  const attacks = wizards[wizard].attacks;
 
-  const attacks = attacksList();
+  for (let i = 0; i < attacks.length; i++) {
+    const attackName = attacks[i]["attack"];
+    const imageUrl = attacks[i]["image"];
 
-  const attackValue1 = attacks[wizard][0];
-  const attackValue2 = attacks[wizard][1];
+    const attack = document.createElement("button");
+    attack.setAttribute("type", "button");
+    attack.id = `btn-attack-${1}`;
+    attack.setAttribute("value", attackName);
+    attack.classList.add("select-attack__button");
+    attack.innerHTML = attackName;
 
-  attack1.style.display = "inline-block";
-  attack2.style.display = "inline-block";
+    const attackImage = document.createElement("img");
+    attackImage.src = imageUrl;
+    attackImage.setAttribute("alt", attackName);
+    attackImage.classList.add("select-attack__image");
 
-  attack1.setAttribute("value", attackValue1);
-  attack2.setAttribute("value", attackValue2);
-
-  attack1Image.src = `./img/iconAttacks/${attackValue1.replace(" ", "-")}.png`;
-  attack2Image.src = `./img/iconAttacks/${attackValue2.replace(" ", "-")}.png`;
-
-  attack1Image.alt = attackValue1;
-  attack2Image.alt = attackValue2;
-
-  attack1Image.classList = "select-attack__image";
-  attack2Image.classList = "select-attack__image";
-
-  attack1.innerHTML = attackValue1;
-  attack1.appendChild(attack1Image);
-
-  attack2.innerHTML = attackValue2;
-  attack2.appendChild(attack2Image);
+    selectAttack.appendChild(attack);
+    attack.appendChild(attackImage);
+  }
 };
 
 const showRound = () => {
@@ -197,6 +254,7 @@ const showRound = () => {
     imageAlt: `Round ${round}`,
     timer: 3000,
     showConfirmButton: false,
+    allowOutsideClick: false,
   });
 };
 
@@ -215,25 +273,17 @@ const updateRound = () => {
 
 const selectAttackUser = () => {
   const userWizard = document.getElementById("user-wizard");
-  const attack1 = document.getElementById("btn-attack1");
-  const attack2 = document.getElementById("btn-attack2");
+  const btnAttacks = document.querySelectorAll(".select-attack__button");
 
-  attack1.addEventListener("click", () => {
-    const [enemyWizard, enemyAttack] = selectAttackEnemy();
-    const userWizard1 = userWizard.textContent;
-    const userAttack = attack1.getAttribute("value");
+  btnAttacks.forEach((attack) => {
+    attack.addEventListener("click", () => {
+      const [enemyWizard, enemyAttack] = selectAttackEnemy();
+      const userWizardText = userWizard.textContent;
+      const userAttack = attack.getAttribute("value");
 
-    showAttackPlayers(userWizard1, userAttack, enemyWizard, enemyAttack);
-    validateWinner(enemyWizard, userWizard1, userAttack, enemyAttack);
-  });
-
-  attack2.addEventListener("click", () => {
-    const [enemyWizard, enemyAttack] = selectAttackEnemy();
-    const userWizard2 = userWizard.textContent;
-    const userAttack = attack2.getAttribute("value");
-
-    showAttackPlayers(userWizard2, userAttack, enemyWizard, enemyAttack);
-    validateWinner(enemyWizard, userWizard2, userAttack, enemyAttack);
+      showAttackPlayers(userWizardText, userAttack, enemyWizard, enemyAttack);
+      validateWinner(enemyWizard, userWizardText, userAttack, enemyAttack);
+    });
   });
 };
 
@@ -249,13 +299,11 @@ const selectAttackEnemy = () => {
 
 const showAttackName = (wizard, attack) => {
   const combatAttack = document.getElementById("combat-attack");
+  const [start, end] = getCharacteristicWizard(wizard, "colors");
 
   combatAttack.innerHTML = attack;
   combatAttack.style.opacity = 1;
-  combatAttack.style.backgroundImage = `linear-gradient(90deg, ${colors(
-    wizard,
-    "initial"
-  )} 0%, ${colors(wizard, "end")} 100%)`;
+  combatAttack.style.backgroundImage = `linear-gradient(90deg, ${start} 0%, ${end} 100%)`;
 
   setTimeout(() => {
     combatAttack.style.opacity = 0;
@@ -331,7 +379,7 @@ const getHealthPlayer = (
 };
 
 const showHealth = (player, wizard, id) => {
-  const healthWizard = health(wizard);
+  const healthWizard = getCharacteristicWizard(wizard, "health");
   const healthContainer = document.getElementById(`health-${player}-container`);
   const wizardHealth = document.createElement("p");
 
@@ -348,7 +396,7 @@ const showHealth = (player, wizard, id) => {
 
 const updateHealthBar = (player, wizard, healthWizard) => {
   const healthPlayer = document.getElementById(`health-${player}-bar`);
-  const healthBase = health(wizard);
+  const healthBase = getCharacteristicWizard(wizard, "health");
   const percent = Math.floor((healthWizard * 100) / healthBase);
 
   percent <= 0
@@ -570,8 +618,8 @@ const resetHealthRound = (user, enemy) => {
   const healthUser = document.getElementById(`${user}-1`);
   const healthEnemy = document.getElementById(`${enemy}-2`);
 
-  healthUser.innerHTML = health(user);
-  healthEnemy.innerHTML = health(enemy);
+  healthUser.innerHTML = getCharacteristicWizard(user, "health");
+  healthEnemy.innerHTML = getCharacteristicWizard(enemy, "health");
 };
 
 const resetHealthBarRound = () => {
