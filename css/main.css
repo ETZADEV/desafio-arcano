@@ -590,6 +590,10 @@
   .select-wizards__cards {
     margin-bottom: 20px;
   }
+
+  .combat {
+    height: 49%;
+  }
 }
 
 @media (width >= 1107px) and (height >= 696px) {
