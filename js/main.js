@@ -51,57 +51,65 @@ const createCardWizard = (wizards) => {
     const urlElementImage = data[i].elementImage;
     const element = data[i].element;
 
-    const card = document.createElement("div");
-    card.classList.add("select-wizards__card");
-    card.setAttribute("wizard", name);
+    let card;
 
-    const input = document.createElement("input");
-    input.setAttribute("type", "radio");
-    input.setAttribute("name", "wizards");
-    input.id = name.toLowerCase();
-    input.classList.add("select-wizards__input");
-    input.setAttribute("value", name);
+    if (i === 0) {
+      card = `<div class="select-wizards__card select-wizards__card--selected" wizard=${name}>
+            <input
+              type="radio"
+              name="wizards"
+              id=${name.toLowerCase()}
+              class="select-wizards__input"
+              value=${name}
+              checked
+            />
+            <label class="select-wizards__label" for=${name.toLowerCase()}>
+              <img
+                src=${urlImage}
+                alt="Wizard ${name}"
+                class="select-wizards__image-wizard"
+              />
+              <p>${name}</p>
+            </label>
+            <div class="select-wizards__container-image" value=${name}>
+              <img
+                src=${urlElementImage}
+                alt=${element}
+                class="select-wizards__image-type"
+              />
+            </div>
+          </div>`;
+    } else {
+      card = `<div class="select-wizards__card" wizard=${name}>
+            <input
+              type="radio"
+              name="wizards"
+              id=${name.toLowerCase()}
+              class="select-wizards__input"
+              value=${name}
+            />
+            <label class="select-wizards__label" for=${name.toLowerCase()}>
+              <img
+                src=${urlImage}
+                alt="Wizard ${name}"
+                class="select-wizards__image-wizard"
+              />
+              <p>${name}</p>
+            </label>
+            <div class="select-wizards__container-image" value=${name}>
+              <img
+                src=${urlElementImage}
+                alt=${element}
+                class="select-wizards__image-type"
+              />
+            </div>
+          </div>`;
+    }
 
-    const label = document.createElement("label");
-    label.setAttribute("for", name.toLowerCase());
-    label.classList.add("select-wizards__label");
-
-    const image = document.createElement("img");
-    image.src = urlImage;
-    image.setAttribute("alt", `Wizard ${name}`);
-    image.classList.add("select-wizards__image-wizard");
-
-    const p = document.createElement("p");
-    p.innerHTML = name;
-
-    const container = document.createElement("div");
-    container.setAttribute("value", name);
-    container.classList.add("select-wizards__container-image");
-
-    const elementImage = document.createElement("img");
-    elementImage.src = urlElementImage;
-    elementImage.setAttribute("alt", element);
-    elementImage.classList.add("select-wizards__image-type");
-
-    isSelected(i, card, input);
-
-    card.appendChild(input);
-    card.appendChild(label);
-    label.appendChild(image);
-    label.appendChild(p);
-    card.appendChild(container);
-    container.appendChild(elementImage);
-    cardsContainer.appendChild(card);
+    cardsContainer.innerHTML += card;
 
     setBackgroundColorContainer();
     changeClassCard();
-  }
-};
-
-const isSelected = (i, card, input) => {
-  if (i === 0) {
-    card.classList.add("select-wizards__card--selected");
-    input.checked = true;
   }
 };
 
@@ -221,25 +229,14 @@ const createButtonsAttacks = (wizards, wizard) => {
   const selectAttack = document.getElementById("select-attack");
   const attacks = wizards[wizard].attacks;
 
-  for (let i = 0; i < attacks.length; i++) {
-    const attackName = attacks[i]["attack"];
-    const imageUrl = attacks[i]["image"];
+  attacks.forEach((attack) => {
+    const button = `<button type="button" id="btn-attack" value=${attack.attack} class="select-attack__button">
+          ${attack.attack}
+          <img src=${attack.image} alt=${attack.attack} class="select-attack__image"/>
+        </button>`;
 
-    const attack = document.createElement("button");
-    attack.setAttribute("type", "button");
-    attack.id = `btn-attack-${1}`;
-    attack.setAttribute("value", attackName);
-    attack.classList.add("select-attack__button");
-    attack.innerHTML = attackName;
-
-    const attackImage = document.createElement("img");
-    attackImage.src = imageUrl;
-    attackImage.setAttribute("alt", attackName);
-    attackImage.classList.add("select-attack__image");
-
-    selectAttack.appendChild(attack);
-    attack.appendChild(attackImage);
-  }
+    selectAttack.innerHTML += button;
+  });
 };
 
 const showRound = () => {
