@@ -1,4 +1,4 @@
-import { attacksList, damageWizard, random } from "./utils.js";
+import { damageWizard, random } from "./utils.js";
 import wizards from "./wizards.js";
 
 const initGame = () => {
@@ -153,10 +153,21 @@ const selectWizardUser = () => {
   showHealth("user", wizardUser, 1, wizards);
 };
 
+const getWizardsNames = () => {
+  const data = Object.values(wizards);
+  let wizardsNames = [];
+
+  for (let i = 0; i < data.length; i++) {
+    wizardsNames.push(data[i].name);
+  }
+
+  return wizardsNames;
+};
+
 const selectWizardEnemy = () => {
   const enemyWizard = document.getElementById("enemy-wizard");
-  const wizards = ["Magd", "Flamewalker", "Stoneheart", "Whisperwind"];
-  const wizardSelected = wizards[random(3, 0)];
+  const wizardsNames = getWizardsNames();
+  const wizardSelected = wizardsNames[random(3, 0)];
 
   showWizard("enemy", wizardSelected, 2);
   showWizardCombat("enemy", wizardSelected, 2);
@@ -230,9 +241,11 @@ const createButtonsAttacks = (wizards, wizard) => {
   const attacks = wizards[wizard].attacks;
 
   attacks.forEach((attack) => {
-    const button = `<button type="button" id="btn-attack" value=${attack.attack} class="select-attack__button">
+    const attackNameFormat = attack.attack.replace(" ", "-");
+
+    const button = `<button type="button" id="btn-attack" value=${attackNameFormat} class="select-attack__button">
           ${attack.attack}
-          <img src=${attack.image} alt=${attack.attack} class="select-attack__image"/>
+          <img src=${attack.image} alt=${attackNameFormat} class="select-attack__image"/>
         </button>`;
 
     selectAttack.innerHTML += button;
@@ -276,7 +289,7 @@ const selectAttackUser = () => {
     attack.addEventListener("click", () => {
       const [enemyWizard, enemyAttack] = selectAttackEnemy();
       const userWizardText = userWizard.textContent;
-      const userAttack = attack.getAttribute("value");
+      const userAttack = attack.getAttribute("value").replace("-", " ");
 
       showAttackPlayers(userWizardText, userAttack, enemyWizard, enemyAttack);
       validateWinner(enemyWizard, userWizardText, userAttack, enemyAttack);
@@ -286,10 +299,8 @@ const selectAttackUser = () => {
 
 const selectAttackEnemy = () => {
   const enemyWizard = document.getElementById("enemy-wizard").textContent;
-  const enemy = enemyWizard.toLowerCase();
-  const attacks = attacksList();
-
-  const attack = attacks[enemy][random(1, 0)];
+  const enemy = enemyWizard;
+  const attack = wizards[enemy].attacks[random(1, 0)].attack;
 
   return [enemyWizard, attack];
 };
@@ -315,13 +326,16 @@ const showAttackCombat = (wizard, id, attack) => {
 
     wizardImage.src = `./img/attacks/${attackPlayer}.gif`;
 
-    id == 2
-      ? (wizardImage.classList =
-          "combat__image--attack combat__image--attack-enemy wizard__player--rotating")
-      : (wizardImage.classList =
-          "combat__image--attack combat__image--attack-user");
+    if (id === 1) {
+      wizardImage.classList =
+        "combat__image--attack combat__image--attack-user";
+      showAttackName(wizard, attack.replace("-", " "));
+    } else {
+      wizardImage.classList =
+        "combat__image--attack combat__image--attack-enemy wizard__player--rotating";
+      showAttackName(wizard, attack);
+    }
 
-    showAttackName(wizard, attack);
     playAudio("attacks", attackPlayer);
   }
 };

@@ -1,13 +1,3 @@
-const attacksList = () => {
-  const magd = ["Water Jet", "Freezing"];
-  const flamewalker = ["Fireball", "Fire Blaze"];
-  const stoneheart = ["Earth Bullets", "Boulder Toss"];
-  const whisperwind = ["Slam", "Tornado"];
-  const attacks = { magd, flamewalker, stoneheart, whisperwind };
-
-  return attacks;
-};
-
 const damageWizard = (damaged, attacker, attack) => {
   const damage = {
     Magd: {
@@ -89,4 +79,4 @@ const damageWizard = (damaged, attacker, attack) => {
 
 const random = (max, min) => Math.floor(Math.random() * (max - min + 1) + min);
 
-export { attacksList, damageWizard, random };
+export { damageWizard, random };
