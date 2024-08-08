@@ -53,8 +53,8 @@ const createCardWizard = (wizards) => {
 
     let card;
 
-    if (i === 0) {
-      card = `<div class="select-wizards__card select-wizards__card--selected" wizard=${name}>
+    i === 0
+      ? (card = `<div class="select-wizards__card select-wizards__card--selected" wizard=${name}>
             <input
               type="radio"
               name="wizards"
@@ -78,9 +78,8 @@ const createCardWizard = (wizards) => {
                 class="select-wizards__image-type"
               />
             </div>
-          </div>`;
-    } else {
-      card = `<div class="select-wizards__card" wizard=${name}>
+          </div>`)
+      : (card = `<div class="select-wizards__card" wizard=${name}>
             <input
               type="radio"
               name="wizards"
@@ -103,8 +102,7 @@ const createCardWizard = (wizards) => {
                 class="select-wizards__image-type"
               />
             </div>
-          </div>`;
-    }
+          </div>`);
 
     cardsContainer.innerHTML += card;
 
@@ -167,7 +165,8 @@ const getWizardsNames = () => {
 const selectWizardEnemy = () => {
   const enemyWizard = document.getElementById("enemy-wizard");
   const wizardsNames = getWizardsNames();
-  const wizardSelected = wizardsNames[random(3, 0)];
+  const max = wizardsNames.length - 1;
+  const wizardSelected = wizardsNames[random(max, 0)];
 
   showWizard("enemy", wizardSelected, 2);
   showWizardCombat("enemy", wizardSelected, 2);
@@ -243,7 +242,7 @@ const createButtonsAttacks = (wizards, wizard) => {
   attacks.forEach((attack) => {
     const attackNameFormat = attack.attack.replace(" ", "-");
 
-    const button = `<button type="button" id="btn-attack" value=${attackNameFormat} class="select-attack__button">
+    const button = `<button type="button" id="btn-attack-${attackNameFormat}" value=${attackNameFormat} class="select-attack__button">
           ${attack.attack}
           <img src=${attack.image} alt=${attackNameFormat} class="select-attack__image"/>
         </button>`;
@@ -300,7 +299,9 @@ const selectAttackUser = () => {
 const selectAttackEnemy = () => {
   const enemyWizard = document.getElementById("enemy-wizard").textContent;
   const enemy = enemyWizard;
-  const attack = wizards[enemy].attacks[random(1, 0)].attack;
+  const attacks = wizards[enemy].attacks;
+  const max = attacks.length - 1;
+  const attack = attacks[random(max, 0)].attack;
 
   return [enemyWizard, attack];
 };
