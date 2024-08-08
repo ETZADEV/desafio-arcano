@@ -500,6 +500,7 @@ const userVictory = (damaged, attacker) => {
 
   setTimeout(() => {
     showAlert("enemy", attacker, "Gana", "Round", attacker, damaged);
+    playAudio("results", "win");
   }, 5000);
 };
 
@@ -512,6 +513,7 @@ const enemyVictory = (damaged, attacker) => {
 
   setTimeout(() => {
     showAlert("user", damaged, "Pierde", "Round", attacker, damaged);
+    playAudio("results", "lose");
   }, 13000);
 };
 
