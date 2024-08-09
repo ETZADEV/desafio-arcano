@@ -605,9 +605,13 @@ const showAlert = (player, wizard, result, type, attacker, damaged) => {
   }).then(() => {
     setTimeout(() => {
       if (lives == 0) {
-        player == "user" ? saveVictories("enemy") : saveVictories("user");
+        if (player == "user") {
+          saveVictories("enemy");
+          lives = updateLives("user");
+        } else {
+          saveVictories("user");
+        }
 
-        lives = updateLives("user");
         showAlert("user", wizard, result, "Combate");
         showBtnReset();
         disabledButtons();
