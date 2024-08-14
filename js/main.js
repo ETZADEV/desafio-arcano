@@ -34,11 +34,10 @@ const selectWizards = () => {
   hideGameTitle();
   hideSelectWizard();
   selectAttackUser();
-  showGameCombat();
-  showLives();
-  showCombat();
-  showVictories();
-  showRound();
+  showMap();
+  addMouseEventToButton();
+  handleMovementKeyPress();
+  // showGameCombat();
 };
 
 const createCardWizard = (wizards) => {
@@ -174,6 +173,89 @@ const selectWizardEnemy = () => {
   showHealth("enemy", wizardSelected, 2, wizards);
 };
 
+const showMap = () => {
+  const map = document.getElementById("map");
+  map.style.display = "flex";
+
+  drawWizard(0, 0);
+};
+
+const drawWizard = (x, y) => {
+  const userWizard = document.getElementById("user-wizard").textContent;
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  const image = new Image();
+  let positionX = 20;
+  let positionY = 20;
+
+  positionX += x;
+  positionY += y;
+
+  image.src = wizards[userWizard].urlImage;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(image, positionX, positionY);
+};
+
+const addMouseEventToButton = () => {
+  const buttons = document.querySelectorAll(".map__button-navigation");
+  const canvas = document.getElementById("canvas");
+  let x = 0;
+  let y = 0;
+  let interval;
+
+  buttons.forEach((button) => {
+    button.addEventListener("mousedown", () => {
+      interval = setInterval(() => {
+        if (button.id === "top" && y > -25) {
+          y -= 5;
+        } else if (button.id === "left" && x > -25) {
+          x -= 5;
+        } else if (button.id === "bottom" && y + 135 < canvas.height) {
+          y += 5;
+        } else if (button.id === "right" && x + 115 < canvas.width) {
+          x += 5;
+        }
+
+        drawWizard(x, y);
+      }, 35);
+    });
+
+    button.addEventListener("mouseup", () => {
+      clearInterval(interval);
+    });
+  });
+};
+
+const handleMovementKeyPress = () => {
+  let x = 0;
+  let y = 0;
+  let interval;
+
+  window.addEventListener("keydown", (e) => {
+    if (!interval) {
+      interval = setInterval(() => {
+        if (e.key === "ArrowUp" && y > -25) {
+          y -= 5;
+        } else if (e.key === "ArrowLeft" && x > -25) {
+          x -= 5;
+        } else if (e.key === "ArrowDown" && y + 135 < canvas.height) {
+          y += 5;
+        } else if (e.key == "ArrowRight" && x + 115 < canvas.width) {
+          x += 5;
+        }
+
+        drawWizard(x, y);
+      }, 35);
+    }
+  });
+
+  window.addEventListener("keyup", () => {
+    clearInterval(interval);
+    interval = null;
+  });
+};
+
 const disabledBtnSelect = () => {
   const selectWizard = document.getElementById("select-wizard");
   selectWizard.disabled = true;
@@ -193,8 +275,12 @@ const hideSelectWizard = () => {
 
 const showGameCombat = () => {
   const gameCombat = document.getElementById("game-combat");
-
   gameCombat.style.display = "block";
+
+  showLives();
+  showCombat();
+  showVictories();
+  showRound();
 };
 
 const showCombat = () => {
