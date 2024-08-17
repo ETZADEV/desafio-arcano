@@ -28,7 +28,7 @@ button {
 .game {
   padding: 20px;
   height: 100vh;
-  background: url(../img/bg.jpg) no-repeat center/cover fixed;
+  background: url(../img/backgrounds/bg.jpg) no-repeat center/cover fixed;
   overflow: hidden;
 }
 
@@ -161,6 +161,13 @@ button {
 }
 
 .map__canvas {
+  width: 700px;
+  height: 500px;
+  background-image: url("../img/backgrounds/mapBg.jpg");
+  background-repeat: no-repeat;
+  background-attachment: initial;
+  background-position: center;
+  background-size: cover;
   border: 2px solid var(--main-text-color);
 }
 

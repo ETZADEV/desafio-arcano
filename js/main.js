@@ -1,4 +1,4 @@
-import { damageWizard, random } from "./utils.js";
+import { damageWizard, positions, random } from "./utils.js";
 import wizards from "./wizards.js";
 
 const initGame = () => {
@@ -37,7 +37,6 @@ const selectWizards = () => {
   showMap();
   addMouseEventToButton();
   handleMovementKeyPress();
-  // showGameCombat();
 };
 
 const createCardWizard = (wizards) => {
@@ -177,29 +176,61 @@ const showMap = () => {
   const map = document.getElementById("map");
   map.style.display = "flex";
 
-  drawWizard(0, 0);
+  drawScene();
 };
 
-const drawWizard = (x, y) => {
+const drawScene = (x = 0, y = 0) => {
   const userWizard = document.getElementById("user-wizard").textContent;
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
   const image = new Image();
-  let positionX = 20;
-  let positionY = 20;
+  let positionX = 0;
+  let positionY = 0;
+
+  canvas.width = 700;
+  canvas.height = 500;
 
   positionX += x;
   positionY += y;
 
   image.src = wizards[userWizard].urlImage;
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(image, positionX, positionY);
+  requestAnimationFrame(() => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, positionX, positionY, 80, 100);
+    drawWizardsEnemies();
+  });
+
+  if (x >= 0 || y >= 0) {
+    for (let i = 0; i < positions.length; i++) {
+      let collision = checkCollision(x, y, positions[i]);
+
+      if (collision) {
+        showGameCombat();
+      }
+    }
+  }
+};
+
+const drawWizardsEnemies = () => {
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  const data = Object.values(wizards);
+
+  for (let i = 0; i < data.length; i++) {
+    const image = new Image();
+    const positionX = positions[i].positionX;
+    const positionY = positions[i].positionY;
+
+    image.src = data[i].urlImage;
+
+    ctx.drawImage(image, positionX, positionY, 80, 100);
+  }
 };
 
 const addMouseEventToButton = () => {
-  const buttons = document.querySelectorAll(".map__button-navigation");
   const canvas = document.getElementById("canvas");
+  const buttons = document.querySelectorAll(".map__button-navigation");
   let x = 0;
   let y = 0;
   let interval;
@@ -207,18 +238,18 @@ const addMouseEventToButton = () => {
   buttons.forEach((button) => {
     button.addEventListener("mousedown", () => {
       interval = setInterval(() => {
-        if (button.id === "top" && y > -25) {
-          y -= 5;
-        } else if (button.id === "left" && x > -25) {
-          x -= 5;
-        } else if (button.id === "bottom" && y + 135 < canvas.height) {
-          y += 5;
-        } else if (button.id === "right" && x + 115 < canvas.width) {
-          x += 5;
+        if (button.id === "top" && y > 0) {
+          y -= 10;
+        } else if (button.id === "left" && x > 0) {
+          x -= 10;
+        } else if (button.id === "bottom" && y < canvas.height - 100) {
+          y += 10;
+        } else if (button.id === "right" && x < 211) {
+          x += 10;
         }
 
-        drawWizard(x, y);
-      }, 35);
+        drawScene(x, y);
+      }, 50);
     });
 
     button.addEventListener("mouseup", () => {
@@ -235,18 +266,18 @@ const handleMovementKeyPress = () => {
   window.addEventListener("keydown", (e) => {
     if (!interval) {
       interval = setInterval(() => {
-        if (e.key === "ArrowUp" && y > -25) {
-          y -= 5;
-        } else if (e.key === "ArrowLeft" && x > -25) {
-          x -= 5;
-        } else if (e.key === "ArrowDown" && y + 135 < canvas.height) {
-          y += 5;
-        } else if (e.key == "ArrowRight" && x + 115 < canvas.width) {
-          x += 5;
+        if (e.key === "ArrowUp" && y > 0) {
+          y -= 10;
+        } else if (e.key === "ArrowLeft" && x > 0) {
+          x -= 10;
+        } else if (e.key === "ArrowDown" && y < canvas.height - 100) {
+          y += 10;
+        } else if (e.key == "ArrowRight" && x < canvas.width - 80) {
+          x += 10;
         }
 
-        drawWizard(x, y);
-      }, 35);
+        drawScene(x, y);
+      }, 50);
     }
   });
 
@@ -254,6 +285,29 @@ const handleMovementKeyPress = () => {
     clearInterval(interval);
     interval = null;
   });
+};
+
+const checkCollision = (x, y, enemy) => {
+  const topSideUser = 0 + y;
+  const leftSideUser = 0 + x;
+  const rightSideUser = leftSideUser + 60;
+  const bottomSideUser = topSideUser + 80;
+
+  const topSideEnemy = enemy.positionY;
+  const leftSideEnemy = enemy.positionX;
+  const rightSideEnemy = leftSideEnemy + 80;
+  const bottomSideEnemy = topSideEnemy + 100;
+
+  if (
+    topSideUser > bottomSideEnemy ||
+    leftSideUser > rightSideEnemy ||
+    bottomSideUser < topSideEnemy ||
+    rightSideUser < leftSideEnemy
+  ) {
+    return;
+  }
+
+  return true;
 };
 
 const disabledBtnSelect = () => {
