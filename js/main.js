@@ -29,7 +29,6 @@ const setBackgroundColorContainer = () => {
 
 const selectWizards = () => {
   selectWizardUser();
-  selectWizardEnemy();
   disabledBtnSelect();
   hideGameTitle();
   hideSelectWizard();
@@ -160,11 +159,9 @@ const getWizardsNames = () => {
   return wizardsNames;
 };
 
-const selectWizardEnemy = () => {
+const selectWizardEnemy = (wizard) => {
   const enemyWizard = document.getElementById("enemy-wizard");
-  const wizardsNames = getWizardsNames();
-  const max = wizardsNames.length - 1;
-  const wizardSelected = wizardsNames[random(max, 0)];
+  const wizardSelected = wizard;
 
   showWizard("enemy", wizardSelected, 2);
   showWizardCombat("enemy", wizardSelected, 2);
@@ -177,6 +174,11 @@ const showMap = () => {
   map.style.display = "flex";
 
   drawScene();
+};
+
+const hideMap = () => {
+  const map = document.getElementById("map");
+  map.style.display = "none";
 };
 
 const drawScene = (x = 0, y = 0) => {
@@ -201,11 +203,22 @@ const drawScene = (x = 0, y = 0) => {
     drawWizardsEnemies();
   });
 
+  validateCollision(x, y);
+};
+
+const validateCollision = (x, y) => {
+  const wizardsNames = getWizardsNames();
+  const canvas = document.getElementById("canvas");
+
   if (x >= 0 || y >= 0) {
     for (let i = 0; i < positions.length; i++) {
-      let collision = checkCollision(x, y, positions[i]);
+      const collision = checkCollision(x, y, positions[i]);
+      const wizard = wizardsNames[i];
 
       if (collision) {
+        canvas.remove();
+        hideMap();
+        selectWizardEnemy(wizard);
         showGameCombat();
       }
     }
