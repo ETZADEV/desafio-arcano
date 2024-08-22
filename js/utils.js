@@ -77,13 +77,6 @@ const damageWizard = (damaged, attacker, attack) => {
   return damage[damaged][attacker][attack];
 };
 
-const positions = [
-  { positionX: 90, positionY: 90 },
-  { positionX: 290, positionY: 200 },
-  { positionX: 515, positionY: 230 },
-  { positionX: 20, positionY: 400 },
-];
-
 const random = (max, min) => Math.floor(Math.random() * (max - min + 1) + min);
 
-export { damageWizard, positions, random };
+export { damageWizard, random };

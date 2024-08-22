@@ -1,4 +1,4 @@
-import { damageWizard, positions, random } from "./utils.js";
+import { damageWizard, random } from "./utils.js";
 import wizards from "./wizards.js";
 
 const initGame = () => {
@@ -34,8 +34,6 @@ const selectWizards = () => {
   hideSelectWizard();
   selectAttackUser();
   showMap();
-  addMouseEventToButton();
-  handleMovementKeyPress();
 };
 
 const createCardWizard = (wizards) => {
@@ -169,11 +167,25 @@ const selectWizardEnemy = (wizard) => {
   showHealth("enemy", wizardSelected, 2, wizards);
 };
 
+const calcMapSize = () => {
+  const heightWindow = window.innerHeight;
+  const map = document.getElementById("map");
+  const heightMap = map.clientHeight;
+
+  if (heightMap < heightWindow) {
+    map.style.height = "calc(100vh - 40px)";
+  }
+};
+
 const showMap = () => {
   const map = document.getElementById("map");
   map.style.display = "flex";
+  const positions = generateRandomPositions();
 
-  drawScene();
+  calcMapSize();
+  drawScene(0, 0, positions);
+  addMouseEventToButton();
+  handleMovementKeyPress(positions);
 };
 
 const hideMap = () => {
@@ -181,32 +193,43 @@ const hideMap = () => {
   map.style.display = "none";
 };
 
-const drawScene = (x = 0, y = 0) => {
+const calcCanvasSizeFromScreenWidth = () => {
+  const widthWidow = window.innerWidth;
+  let width = 700;
+  let height = 500;
+
+  if (widthWidow < 740) {
+    width = widthWidow - 40;
+  }
+
+  return [width, height];
+};
+
+const drawScene = (x = 0, y = 0, positions) => {
   const userWizard = document.getElementById("user-wizard").textContent;
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
   const image = new Image();
   let positionX = 0;
   let positionY = 0;
+  const [width, height] = calcCanvasSizeFromScreenWidth();
 
-  canvas.width = 700;
-  canvas.height = 500;
+  canvas.width = width;
+  canvas.height = height;
 
   positionX += x;
   positionY += y;
 
   image.src = wizards[userWizard].urlImage;
 
-  requestAnimationFrame(() => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(image, positionX, positionY, 80, 100);
-    drawWizardsEnemies();
-  });
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(image, positionX, positionY, 80, 100);
+  drawWizardsEnemies(positions);
 
-  validateCollision(x, y);
+  validateCollision(x, y, positions);
 };
 
-const validateCollision = (x, y) => {
+const validateCollision = (x, y, positions) => {
   const wizardsNames = getWizardsNames();
   const canvas = document.getElementById("canvas");
 
@@ -225,7 +248,7 @@ const validateCollision = (x, y) => {
   }
 };
 
-const drawWizardsEnemies = () => {
+const drawWizardsEnemies = (positions) => {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
   const data = Object.values(wizards);
@@ -241,7 +264,7 @@ const drawWizardsEnemies = () => {
   }
 };
 
-const addMouseEventToButton = () => {
+const addMouseEventToButton = (positions) => {
   const canvas = document.getElementById("canvas");
   const buttons = document.querySelectorAll(".map__button-navigation");
   let x = 0;
@@ -257,11 +280,11 @@ const addMouseEventToButton = () => {
           x -= 10;
         } else if (button.id === "bottom" && y < canvas.height - 100) {
           y += 10;
-        } else if (button.id === "right" && x < 211) {
+        } else if (button.id === "right" && x < canvas.width - 80) {
           x += 10;
         }
 
-        drawScene(x, y);
+        drawScene(x, y, positions);
       }, 50);
     });
 
@@ -271,7 +294,7 @@ const addMouseEventToButton = () => {
   });
 };
 
-const handleMovementKeyPress = () => {
+const handleMovementKeyPress = (positions) => {
   let x = 0;
   let y = 0;
   let interval;
@@ -289,7 +312,7 @@ const handleMovementKeyPress = () => {
           x += 10;
         }
 
-        drawScene(x, y);
+        drawScene(x, y, positions);
       }, 50);
     }
   });
@@ -298,6 +321,21 @@ const handleMovementKeyPress = () => {
     clearInterval(interval);
     interval = null;
   });
+};
+
+const generateRandomPositions = () => {
+  const [width, height] = calcCanvasSizeFromScreenWidth();
+  const data = Object.entries(wizards);
+  const positions = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const positionX = random(width - 80, 120);
+    const positionY = random(height - 100, 140);
+
+    positions.push({ positionX, positionY });
+  }
+
+  return positions;
 };
 
 const checkCollision = (x, y, enemy) => {
