@@ -184,7 +184,6 @@ const showMap = () => {
 
   calcMapSize();
   drawScene(0, 0, positions);
-  addMouseEventToButton();
   handleMovementKeyPress(positions);
 };
 
