@@ -29,16 +29,11 @@ const setBackgroundColorContainer = () => {
 
 const selectWizards = () => {
   selectWizardUser();
-  selectWizardEnemy();
   disabledBtnSelect();
   hideGameTitle();
   hideSelectWizard();
   selectAttackUser();
-  showGameCombat();
-  showLives();
-  showCombat();
-  showVictories();
-  showRound();
+  showMap();
 };
 
 const createCardWizard = (wizards) => {
@@ -162,16 +157,207 @@ const getWizardsNames = () => {
   return wizardsNames;
 };
 
-const selectWizardEnemy = () => {
+const selectWizardEnemy = (wizard) => {
   const enemyWizard = document.getElementById("enemy-wizard");
-  const wizardsNames = getWizardsNames();
-  const max = wizardsNames.length - 1;
-  const wizardSelected = wizardsNames[random(max, 0)];
+  const wizardSelected = wizard;
 
   showWizard("enemy", wizardSelected, 2);
   showWizardCombat("enemy", wizardSelected, 2);
   enemyWizard.innerHTML = wizardSelected;
   showHealth("enemy", wizardSelected, 2, wizards);
+};
+
+const calcMapSize = () => {
+  const heightWindow = window.innerHeight;
+  const map = document.getElementById("map");
+  const heightMap = map.clientHeight;
+
+  if (heightMap < heightWindow) {
+    map.style.height = "calc(100vh - 40px)";
+  }
+};
+
+const showMap = () => {
+  const map = document.getElementById("map");
+  map.style.display = "flex";
+  const positions = generateRandomPositions();
+
+  calcMapSize();
+  drawScene(0, 0, positions);
+  handleMovementKeyPress(positions);
+};
+
+const hideMap = () => {
+  const map = document.getElementById("map");
+  map.style.display = "none";
+};
+
+const calcCanvasSizeFromScreenWidth = () => {
+  const widthWidow = window.innerWidth;
+  let width = 700;
+  let height = 500;
+
+  if (widthWidow < 740) {
+    width = widthWidow - 40;
+  }
+
+  return [width, height];
+};
+
+const drawScene = (x = 0, y = 0, positions) => {
+  const userWizard = document.getElementById("user-wizard").textContent;
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  const image = new Image();
+  let positionX = 0;
+  let positionY = 0;
+  const [width, height] = calcCanvasSizeFromScreenWidth();
+
+  canvas.width = width;
+  canvas.height = height;
+
+  positionX += x;
+  positionY += y;
+
+  image.src = wizards[userWizard].urlImage;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(image, positionX, positionY, 80, 100);
+  drawWizardsEnemies(positions);
+
+  validateCollision(x, y, positions);
+};
+
+const validateCollision = (x, y, positions) => {
+  const wizardsNames = getWizardsNames();
+  const canvas = document.getElementById("canvas");
+
+  if (x >= 0 || y >= 0) {
+    for (let i = 0; i < positions.length; i++) {
+      const collision = checkCollision(x, y, positions[i]);
+      const wizard = wizardsNames[i];
+
+      if (collision) {
+        canvas.remove();
+        hideMap();
+        selectWizardEnemy(wizard);
+        showGameCombat();
+      }
+    }
+  }
+};
+
+const drawWizardsEnemies = (positions) => {
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  const data = Object.values(wizards);
+
+  for (let i = 0; i < data.length; i++) {
+    const image = new Image();
+    const positionX = positions[i].positionX;
+    const positionY = positions[i].positionY;
+
+    image.src = data[i].urlImage;
+
+    ctx.drawImage(image, positionX, positionY, 80, 100);
+  }
+};
+
+const addMouseEventToButton = (positions) => {
+  const canvas = document.getElementById("canvas");
+  const buttons = document.querySelectorAll(".map__button-navigation");
+  let x = 0;
+  let y = 0;
+  let interval;
+
+  buttons.forEach((button) => {
+    button.addEventListener("mousedown", () => {
+      interval = setInterval(() => {
+        if (button.id === "top" && y > 0) {
+          y -= 10;
+        } else if (button.id === "left" && x > 0) {
+          x -= 10;
+        } else if (button.id === "bottom" && y < canvas.height - 100) {
+          y += 10;
+        } else if (button.id === "right" && x < canvas.width - 80) {
+          x += 10;
+        }
+
+        drawScene(x, y, positions);
+      }, 50);
+    });
+
+    button.addEventListener("mouseup", () => {
+      clearInterval(interval);
+    });
+  });
+};
+
+const handleMovementKeyPress = (positions) => {
+  let x = 0;
+  let y = 0;
+  let interval;
+
+  window.addEventListener("keydown", (e) => {
+    if (!interval) {
+      interval = setInterval(() => {
+        if (e.key === "ArrowUp" && y > 0) {
+          y -= 10;
+        } else if (e.key === "ArrowLeft" && x > 0) {
+          x -= 10;
+        } else if (e.key === "ArrowDown" && y < canvas.height - 100) {
+          y += 10;
+        } else if (e.key == "ArrowRight" && x < canvas.width - 80) {
+          x += 10;
+        }
+
+        drawScene(x, y, positions);
+      }, 50);
+    }
+  });
+
+  window.addEventListener("keyup", () => {
+    clearInterval(interval);
+    interval = null;
+  });
+};
+
+const generateRandomPositions = () => {
+  const [width, height] = calcCanvasSizeFromScreenWidth();
+  const data = Object.entries(wizards);
+  const positions = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const positionX = random(width - 80, 120);
+    const positionY = random(height - 100, 140);
+
+    positions.push({ positionX, positionY });
+  }
+
+  return positions;
+};
+
+const checkCollision = (x, y, enemy) => {
+  const topSideUser = 0 + y;
+  const leftSideUser = 0 + x;
+  const rightSideUser = leftSideUser + 60;
+  const bottomSideUser = topSideUser + 80;
+
+  const topSideEnemy = enemy.positionY;
+  const leftSideEnemy = enemy.positionX;
+  const rightSideEnemy = leftSideEnemy + 80;
+  const bottomSideEnemy = topSideEnemy + 100;
+
+  if (
+    topSideUser > bottomSideEnemy ||
+    leftSideUser > rightSideEnemy ||
+    bottomSideUser < topSideEnemy ||
+    rightSideUser < leftSideEnemy
+  ) {
+    return;
+  }
+
+  return true;
 };
 
 const disabledBtnSelect = () => {
@@ -193,8 +379,12 @@ const hideSelectWizard = () => {
 
 const showGameCombat = () => {
   const gameCombat = document.getElementById("game-combat");
-
   gameCombat.style.display = "block";
+
+  showLives();
+  showCombat();
+  showVictories();
+  showRound();
 };
 
 const showCombat = () => {

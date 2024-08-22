@@ -8,6 +8,10 @@
   font-family: "Press Start 2P", system-ui;
 }
 
+button {
+  outline: none;
+}
+
 :root {
   --main-color: #131240;
   --secondary-color: #415aa6;
@@ -24,7 +28,7 @@
 .game {
   padding: 20px;
   height: 100vh;
-  background: url(../img/bg.jpg) no-repeat center/cover fixed;
+  background: url(../img/backgrounds/bg.jpg) no-repeat center/cover fixed;
   overflow: hidden;
 }
 
@@ -133,7 +137,6 @@
   color: var(--accent-text-color);
   font-size: 1.2rem;
   cursor: pointer;
-  outline: none;
   border: 2px solid transparent;
   border-radius: 20px;
   transition: 0.75s ease-in-out;
@@ -144,6 +147,92 @@
   color: var(--accent-text-color);
   border: 2px solid var(--accent-color);
   filter: invert(2px);
+}
+
+.map {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.map__title {
+  margin-bottom: 30px;
+  padding: 10px 20px;
+  background: var(--gradient-final-color);
+  color: var(--accent-text-color);
+  border-radius: 20px;
+}
+
+.map__canvas {
+  background-image: url("../img/backgrounds/mapBg.jpg");
+  background-repeat: no-repeat;
+  background-attachment: initial;
+  background-position: center;
+  background-size: cover;
+}
+
+.map__container-buttons {
+  position: relative;
+  top: -105px;
+  right: -300px;
+  width: 94px;
+  height: 100px;
+  background: #000000b1;
+  border-radius: 10px;
+}
+
+.map__move-title {
+  font-size: 0.8rem;
+  color: var(--accent-text-color);
+  font-family: "Supermercado One", sans-serif;
+  text-align: center;
+}
+
+.map__button-navigation {
+  display: inline-block;
+  position: absolute;
+  width: 2rem;
+  height: 2rem;
+  color: transparent;
+  text-decoration: none;
+  border: solid 0.13rem var(--accent-text-color);
+  border-radius: 10rem;
+  cursor: default;
+}
+
+.map__button-navigation::before {
+  content: "▲";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--accent-text-color);
+  font-size: 1rem;
+  line-height: 1.3rem;
+  transition: transform 0.5s ease-in;
+}
+
+.map__button-navigation--top {
+  top: 15px;
+  left: 30px;
+}
+
+.map__button-navigation--left {
+  transform: rotate(270deg);
+  top: 40px;
+  left: 5px;
+}
+
+.map__button-navigation--right {
+  transform: rotate(90deg);
+  top: 40px;
+  left: 55px;
+}
+
+.map__button-navigation--bottom {
+  transform: rotate(180deg);
+  top: 64px;
+  left: 30px;
 }
 
 .game__combat {
@@ -342,7 +431,7 @@
 }
 
 .lives__image {
-  background: linear-gradient(90deg, #3dd6f4d1 0%, #0a7ee2 100%);
+  background: linear-gradient(90deg, #3dd6f485 0%, #0a7de269 100%);
   border: 2px solid var(--black);
   border-radius: 20px;
 }
@@ -520,7 +609,6 @@
 .reset-game__button {
   background: var(--main-color);
   color: var(--accent-text-color);
-  outline: none;
   font-size: 1.5rem;
   padding: 10px 20px;
   cursor: pointer;
@@ -589,6 +677,12 @@
   .select-wizards__title,
   .select-wizards__cards {
     margin-bottom: 20px;
+  }
+
+  .map__title {
+    font-size: 1.2rem;
+    text-align: center;
+    line-height: 1.6rem;
   }
 
   .combat {
@@ -748,5 +842,20 @@
     width: 40px;
     height: 40px;
     border-radius: 15px 7px;
+  }
+}
+
+@media (height <= 530px) and (width <= 668px) {
+  .select-attack {
+    position: absolute;
+    width: 90%;
+    height: 120px;
+    bottom: 10px;
+  }
+}
+
+@media (width <= 768px) {
+  .map__container-buttons {
+    display: none;
   }
 }
