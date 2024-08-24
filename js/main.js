@@ -1,10 +1,13 @@
 import { damageWizard, random } from "./utils.js";
 import wizards from "./wizards.js";
 
+let idPlayer = null;
+
 const initGame = () => {
   const selectWizard = document.getElementById("select-wizard");
   const btnReset = document.getElementById("btn-reset");
 
+  joinGame();
   createCardWizard(wizards);
 
   selectWizard.addEventListener("click", selectWizards);
@@ -144,6 +147,8 @@ const selectWizardUser = () => {
   userWizard.innerHTML = wizardUser;
   createButtonsAttacks(wizards, wizardUser);
   showHealth("user", wizardUser, 1, wizards);
+
+  registerWizardSelected(wizardUser);
 };
 
 const getWizardsNames = () => {
@@ -876,6 +881,28 @@ const showVictories = () => {
     spanVictoriesUser.innerHTML = victoriesUser;
     spanVictoriesEnemy.innerHTML = victoriesEnemy;
   }
+};
+
+const joinGame = () => {
+  fetch("http://localhost:3000/join").then((res) => {
+    if (res.ok) {
+      res.text().then((player) => {
+        idPlayer = player;
+      });
+    }
+  });
+};
+
+const registerWizardSelected = (wizard) => {
+  fetch(`http://localhost:3000/wizard/${idPlayer}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      wizard,
+    }),
+  });
 };
 
 window.addEventListener("load", initGame);
