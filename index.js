@@ -17,6 +17,11 @@ class Player {
   assignWizard(wizard) {
     this.wizard = wizard;
   }
+
+  setWizardPosition(positionX, positionY) {
+    this.positionX = positionX;
+    this.positionY = positionY;
+  }
 }
 
 app.get("/join", (req, res) => {
@@ -39,6 +44,24 @@ app.post("/wizard/:playerId", (req, res) => {
   }
 
   res.end();
+});
+
+app.post("/wizard/:playerId/position", (req, res) => {
+  const playerId = req.params.playerId || "";
+  const positionX = req.body.positionX || 0;
+  const positionY = req.body.positionY || 0;
+
+  const index = players.findIndex((player) => player.id === playerId);
+
+  if (index >= 0) {
+    players[index].setWizardPosition(positionX, positionY);
+  }
+
+  const enemies = players.filter((player) => player.id !== playerId);
+
+  res.send({
+    enemies,
+  });
 });
 
 app.listen(PORT, () => {

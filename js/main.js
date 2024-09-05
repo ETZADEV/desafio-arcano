@@ -2,6 +2,7 @@ import { damageWizard, random } from "./utils.js";
 import wizards from "./wizards.js";
 
 let idPlayer = null;
+let enemiesList = null;
 
 const initGame = () => {
   const selectWizard = document.getElementById("select-wizard");
@@ -151,17 +152,6 @@ const selectWizardUser = () => {
   registerWizardSelected(wizardUser);
 };
 
-const getWizardsNames = () => {
-  const data = Object.values(wizards);
-  let wizardsNames = [];
-
-  for (let i = 0; i < data.length; i++) {
-    wizardsNames.push(data[i].name);
-  }
-
-  return wizardsNames;
-};
-
 const selectWizardEnemy = (wizard) => {
   const enemyWizard = document.getElementById("enemy-wizard");
   const wizardSelected = wizard;
@@ -185,11 +175,11 @@ const calcMapSize = () => {
 const showMap = () => {
   const map = document.getElementById("map");
   map.style.display = "flex";
-  const positions = generateRandomPositions();
+  const coordinates = generateRandomPosition();
 
   calcMapSize();
-  drawScene(0, 0, positions);
-  handleMovementKeyPress(positions);
+  drawScene(coordinates);
+  handleMovementKeyPress(coordinates);
 };
 
 const hideMap = () => {
@@ -209,98 +199,75 @@ const calcCanvasSizeFromScreenWidth = () => {
   return [width, height];
 };
 
-const drawScene = (x = 0, y = 0, positions) => {
+const drawScene = (coordinates) => {
   const userWizard = document.getElementById("user-wizard").textContent;
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
   const image = new Image();
-  let positionX = 0;
-  let positionY = 0;
+  let positionX = coordinates.positionX;
+  let positionY = coordinates.positionY;
   const [width, height] = calcCanvasSizeFromScreenWidth();
 
   canvas.width = width;
   canvas.height = height;
 
-  positionX += x;
-  positionY += y;
-
   image.src = wizards[userWizard].urlImage;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(image, positionX, positionY, 80, 100);
-  drawWizardsEnemies(positions);
 
-  validateCollision(x, y, positions);
+  drawWizardsEnemies();
+  validateCollision(coordinates);
 };
 
-const validateCollision = (x, y, positions) => {
-  const wizardsNames = getWizardsNames();
+const validateCollision = (coordinates) => {
   const canvas = document.getElementById("canvas");
 
-  if (x >= 0 || y >= 0) {
-    for (let i = 0; i < positions.length; i++) {
-      const collision = checkCollision(x, y, positions[i]);
-      const wizard = wizardsNames[i];
+  if (enemiesList !== null) {
+    enemiesList.forEach((enemy) => {
+      if (enemy.hasOwnProperty("wizard")) {
+        const wizard = enemy.wizard;
+        const positionX = enemy.positionX;
+        const positionY = enemy.positionY;
+        const enemyPosition = { positionX, positionY };
 
-      if (collision) {
-        canvas.remove();
-        hideMap();
-        selectWizardEnemy(wizard);
-        showGameCombat();
+        const collision = checkCollision(coordinates, enemyPosition);
+
+        if (collision) {
+          canvas.remove();
+          hideMap();
+          selectWizardEnemy(wizard);
+          showGameCombat();
+        }
       }
-    }
+    });
   }
 };
 
-const drawWizardsEnemies = (positions) => {
+const drawWizardsEnemies = () => {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
   const data = Object.values(wizards);
 
-  for (let i = 0; i < data.length; i++) {
-    const image = new Image();
-    const positionX = positions[i].positionX;
-    const positionY = positions[i].positionY;
+  if (enemiesList !== null) {
+    enemiesList.forEach((enemy) => {
+      if (enemy.hasOwnProperty("wizard")) {
+        const image = new Image();
+        const id = enemy.id;
+        const positionX = enemy.positionX;
+        const positionY = enemy.positionY;
+        const wizard = data.filter((wizard) => wizard.name === enemy.wizard);
 
-    image.src = data[i].urlImage;
-
-    ctx.drawImage(image, positionX, positionY, 80, 100);
+        image.src = wizard[0].urlImage;
+        ctx.drawImage(image, positionX, positionY, 80, 100);
+      }
+    });
   }
 };
 
-const addMouseEventToButton = (positions) => {
-  const canvas = document.getElementById("canvas");
-  const buttons = document.querySelectorAll(".map__button-navigation");
-  let x = 0;
-  let y = 0;
-  let interval;
-
-  buttons.forEach((button) => {
-    button.addEventListener("mousedown", () => {
-      interval = setInterval(() => {
-        if (button.id === "top" && y > 0) {
-          y -= 10;
-        } else if (button.id === "left" && x > 0) {
-          x -= 10;
-        } else if (button.id === "bottom" && y < canvas.height - 100) {
-          y += 10;
-        } else if (button.id === "right" && x < canvas.width - 80) {
-          x += 10;
-        }
-
-        drawScene(x, y, positions);
-      }, 50);
-    });
-
-    button.addEventListener("mouseup", () => {
-      clearInterval(interval);
-    });
-  });
-};
-
-const handleMovementKeyPress = (positions) => {
-  let x = 0;
-  let y = 0;
+const handleMovementKeyPress = (coordinates) => {
+  let x = coordinates.positionX;
+  let y = coordinates.positionY;
   let interval;
 
   window.addEventListener("keydown", (e) => {
@@ -316,8 +283,11 @@ const handleMovementKeyPress = (positions) => {
           x += 10;
         }
 
-        drawScene(x, y, positions);
-      }, 50);
+        const positions = { positionX: x, positionY: y };
+
+        drawScene(positions);
+        sendWizardCoordinates(x, y);
+      }, 30);
     }
   });
 
@@ -327,24 +297,18 @@ const handleMovementKeyPress = (positions) => {
   });
 };
 
-const generateRandomPositions = () => {
+const generateRandomPosition = () => {
   const [width, height] = calcCanvasSizeFromScreenWidth();
-  const data = Object.entries(wizards);
-  const positions = [];
 
-  for (let i = 0; i < data.length; i++) {
-    const positionX = random(width - 80, 120);
-    const positionY = random(height - 100, 140);
+  const positionX = random(width - 80, 120);
+  const positionY = random(height - 100, 140);
 
-    positions.push({ positionX, positionY });
-  }
-
-  return positions;
+  return { positionX, positionY };
 };
 
-const checkCollision = (x, y, enemy) => {
-  const topSideUser = 0 + y;
-  const leftSideUser = 0 + x;
+const checkCollision = (coordinates, enemy) => {
+  const topSideUser = coordinates.positionY;
+  const leftSideUser = coordinates.positionX;
   const rightSideUser = leftSideUser + 60;
   const bottomSideUser = topSideUser + 80;
 
@@ -902,6 +866,25 @@ const registerWizardSelected = (wizard) => {
     body: JSON.stringify({
       wizard,
     }),
+  });
+};
+
+const sendWizardCoordinates = (positionX, positionY) => {
+  fetch(`http://localhost:3000/wizard/${idPlayer}/position`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      positionX,
+      positionY,
+    }),
+  }).then((res) => {
+    if (res.ok) {
+      res.json().then(({ enemies }) => {
+        enemiesList = enemies;
+      });
+    }
   });
 };
 
