@@ -79,4 +79,14 @@ const damageWizard = (damaged, attacker, attack) => {
 
 const random = (max, min) => Math.floor(Math.random() * (max - min + 1) + min);
 
-export { damageWizard, random };
+const assignRandomStates = (player1, player2) => {
+  if (Math.random() < 0.5) {
+    player1.setState("waiting");
+    player2.setState("attacking");
+  } else {
+    player1.setState("attacking");
+    player2.setState("waiting");
+  }
+};
+
+export { damageWizard, random, assignRandomStates };

@@ -25,6 +25,7 @@
   "homepage": "https://github.com/ETZADEV/desafio-arcano#readme",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "ws": "^8.18.0"
   }
 }

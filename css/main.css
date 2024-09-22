@@ -581,6 +581,11 @@ button {
   background: var(--secondary-color);
 }
 
+.select-attack__button:disabled {
+  background: var(--gradient-initial-color);
+  color: #f0f0f066;
+}
+
 .select-attack__image {
   position: absolute;
   top: -2px;
