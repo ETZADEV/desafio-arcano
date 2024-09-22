@@ -1,0 +1,31 @@
+{
+  "name": "desafioarcano",
+  "version": "1.0.0",
+  "description": "Un emocionante juego de combates entre magos.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ETZADEV/desafio-arcano.git"
+  },
+  "keywords": [
+    "game",
+    "magia",
+    "magos",
+    "combate"
+  ],
+  "author": "Johan García Trejo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ETZADEV/desafio-arcano/issues"
+  },
+  "homepage": "https://github.com/ETZADEV/desafio-arcano#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "ws": "^8.18.0"
+  }
+}

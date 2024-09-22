@@ -1,10 +1,19 @@
 import { damageWizard, random } from "./utils.js";
 import wizards from "./wizards.js";
 
+let idPlayer = null;
+let enemiesList = null;
+let globalInterval = null;
+let statePlayer = null;
+let attack = null;
+let socket = null;
+let combat = true;
+
 const initGame = () => {
   const selectWizard = document.getElementById("select-wizard");
   const btnReset = document.getElementById("btn-reset");
 
+  joinGame();
   createCardWizard(wizards);
 
   selectWizard.addEventListener("click", selectWizards);
@@ -34,6 +43,7 @@ const selectWizards = () => {
   hideSelectWizard();
   selectAttackUser();
   showMap();
+  connectWebsocket();
 };
 
 const createCardWizard = (wizards) => {
@@ -144,17 +154,8 @@ const selectWizardUser = () => {
   userWizard.innerHTML = wizardUser;
   createButtonsAttacks(wizards, wizardUser);
   showHealth("user", wizardUser, 1, wizards);
-};
 
-const getWizardsNames = () => {
-  const data = Object.values(wizards);
-  let wizardsNames = [];
-
-  for (let i = 0; i < data.length; i++) {
-    wizardsNames.push(data[i].name);
-  }
-
-  return wizardsNames;
+  registerWizardSelected(wizardUser);
 };
 
 const selectWizardEnemy = (wizard) => {
@@ -180,11 +181,11 @@ const calcMapSize = () => {
 const showMap = () => {
   const map = document.getElementById("map");
   map.style.display = "flex";
-  const positions = generateRandomPositions();
+  const coordinates = generateRandomPosition();
 
   calcMapSize();
-  drawScene(0, 0, positions);
-  handleMovementKeyPress(positions);
+  drawScene(coordinates);
+  handleMovementKeyPress(coordinates);
 };
 
 const hideMap = () => {
@@ -204,117 +205,112 @@ const calcCanvasSizeFromScreenWidth = () => {
   return [width, height];
 };
 
-const drawScene = (x = 0, y = 0, positions) => {
+const drawScene = (coordinates) => {
   const userWizard = document.getElementById("user-wizard").textContent;
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
   const image = new Image();
-  let positionX = 0;
-  let positionY = 0;
+  let positionX = coordinates.positionX;
+  let positionY = coordinates.positionY;
   const [width, height] = calcCanvasSizeFromScreenWidth();
 
   canvas.width = width;
   canvas.height = height;
 
-  positionX += x;
-  positionY += y;
-
   image.src = wizards[userWizard].urlImage;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(image, positionX, positionY, 80, 100);
-  drawWizardsEnemies(positions);
 
-  validateCollision(x, y, positions);
+  drawWizardsEnemies();
+  validateCollision(coordinates);
 };
 
-const validateCollision = (x, y, positions) => {
-  const wizardsNames = getWizardsNames();
+const validateCollision = (coordinates) => {
   const canvas = document.getElementById("canvas");
 
-  if (x >= 0 || y >= 0) {
-    for (let i = 0; i < positions.length; i++) {
-      const collision = checkCollision(x, y, positions[i]);
-      const wizard = wizardsNames[i];
+  if (enemiesList !== null) {
+    for (const enemy of enemiesList) {
+      if (enemy.hasOwnProperty("wizard") && enemy.hasOwnProperty("positionX")) {
+        const wizard = enemy.wizard;
+        const positionX = enemy.positionX;
+        const positionY = enemy.positionY;
+        const enemyPosition = { positionX, positionY };
 
-      if (collision) {
-        canvas.remove();
-        hideMap();
-        selectWizardEnemy(wizard);
-        showGameCombat();
+        const collision = checkCollision(coordinates, enemyPosition);
+
+        if (collision) {
+          hideMap();
+          sendEnemyId(enemy.id);
+          clearInterval(globalInterval);
+          selectWizardEnemy(wizard);
+          showGameCombat();
+          setTimeout(() => {
+            sendWizardCoordinates(
+              coordinates.positionX - 1000,
+              coordinates.positionY - 1000
+            );
+          }, 500);
+          canvas.remove();
+        }
       }
     }
   }
 };
 
-const drawWizardsEnemies = (positions) => {
+const drawWizardsEnemies = () => {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
   const data = Object.values(wizards);
 
-  for (let i = 0; i < data.length; i++) {
-    const image = new Image();
-    const positionX = positions[i].positionX;
-    const positionY = positions[i].positionY;
+  if (enemiesList !== null) {
+    enemiesList.forEach((enemy) => {
+      if (enemy.hasOwnProperty("wizard")) {
+        const image = new Image();
+        const positionX = enemy.positionX;
+        const positionY = enemy.positionY;
+        const wizard = data.filter((wizard) => wizard.name === enemy.wizard);
 
-    image.src = data[i].urlImage;
-
-    ctx.drawImage(image, positionX, positionY, 80, 100);
+        image.src = wizard[0].urlImage;
+        ctx.drawImage(image, positionX, positionY, 80, 100);
+      }
+    });
   }
 };
 
-const addMouseEventToButton = (positions) => {
-  const canvas = document.getElementById("canvas");
-  const buttons = document.querySelectorAll(".map__button-navigation");
-  let x = 0;
-  let y = 0;
-  let interval;
-
-  buttons.forEach((button) => {
-    button.addEventListener("mousedown", () => {
-      interval = setInterval(() => {
-        if (button.id === "top" && y > 0) {
-          y -= 10;
-        } else if (button.id === "left" && x > 0) {
-          x -= 10;
-        } else if (button.id === "bottom" && y < canvas.height - 100) {
-          y += 10;
-        } else if (button.id === "right" && x < canvas.width - 80) {
-          x += 10;
-        }
-
-        drawScene(x, y, positions);
-      }, 50);
-    });
-
-    button.addEventListener("mouseup", () => {
-      clearInterval(interval);
-    });
-  });
-};
-
-const handleMovementKeyPress = (positions) => {
-  let x = 0;
-  let y = 0;
+const handleMovementKeyPress = (coordinates) => {
+  let x = coordinates.positionX;
+  let y = coordinates.positionY;
+  let positions = null;
   let interval;
 
   window.addEventListener("keydown", (e) => {
     if (!interval) {
       interval = setInterval(() => {
         if (e.key === "ArrowUp" && y > 0) {
-          y -= 10;
+          y -= 15;
         } else if (e.key === "ArrowLeft" && x > 0) {
-          x -= 10;
+          x -= 15;
         } else if (e.key === "ArrowDown" && y < canvas.height - 100) {
-          y += 10;
+          y += 15;
         } else if (e.key == "ArrowRight" && x < canvas.width - 80) {
-          x += 10;
+          x += 15;
         }
 
-        drawScene(x, y, positions);
-      }, 50);
+        positions = { positionX: x, positionY: y };
+      }, 30);
     }
   });
+
+  globalInterval = setInterval(() => {
+    if (positions === null) {
+      drawScene(coordinates);
+      sendWizardCoordinates(coordinates.positionX, coordinates.positionY);
+    } else {
+      drawScene(positions);
+      sendWizardCoordinates(positions.positionX, positions.positionY);
+    }
+  }, 30);
 
   window.addEventListener("keyup", () => {
     clearInterval(interval);
@@ -322,31 +318,25 @@ const handleMovementKeyPress = (positions) => {
   });
 };
 
-const generateRandomPositions = () => {
+const generateRandomPosition = () => {
   const [width, height] = calcCanvasSizeFromScreenWidth();
-  const data = Object.entries(wizards);
-  const positions = [];
 
-  for (let i = 0; i < data.length; i++) {
-    const positionX = random(width - 80, 120);
-    const positionY = random(height - 100, 140);
+  const positionX = random(width - 80, 120);
+  const positionY = random(height - 100, 140);
 
-    positions.push({ positionX, positionY });
-  }
-
-  return positions;
+  return { positionX, positionY };
 };
 
-const checkCollision = (x, y, enemy) => {
-  const topSideUser = 0 + y;
-  const leftSideUser = 0 + x;
+const checkCollision = (coordinates, enemy) => {
+  const topSideUser = coordinates.positionY;
+  const leftSideUser = coordinates.positionX;
   const rightSideUser = leftSideUser + 60;
   const bottomSideUser = topSideUser + 80;
 
   const topSideEnemy = enemy.positionY;
   const leftSideEnemy = enemy.positionX;
-  const rightSideEnemy = leftSideEnemy + 80;
-  const bottomSideEnemy = topSideEnemy + 100;
+  const rightSideEnemy = leftSideEnemy + 60;
+  const bottomSideEnemy = topSideEnemy + 80;
 
   if (
     topSideUser > bottomSideEnemy ||
@@ -381,10 +371,36 @@ const showGameCombat = () => {
   const gameCombat = document.getElementById("game-combat");
   gameCombat.style.display = "block";
 
+  setTimeout(() => getState(), 1000);
   showLives();
   showCombat();
-  showVictories();
   showRound();
+  receiveAttacks();
+};
+
+const combatInteractionHandler = () => {
+  const enemyWizard = document.getElementById("enemy-wizard").textContent;
+  const userWizard = document.getElementById("user-wizard").textContent;
+
+  if (attack !== null) {
+    showAttackCombat(enemyWizard, 2, attack);
+    setTimeout(() => resetShowAttackImg(enemyWizard, 2), 5000);
+    validateWinner(1, "user", userWizard, enemyWizard, attack);
+
+    if (combat) {
+      setTimeout(() => enabledButtons(), 6000);
+    }
+  }
+};
+
+const handleAttackButtons = () => {
+  setTimeout(() => {
+    if (statePlayer === "attacking") {
+      enabledButtons();
+    } else if (statePlayer === "waiting") {
+      disabledButtons();
+    }
+  }, 2500);
 };
 
 const showCombat = () => {
@@ -455,6 +471,9 @@ const showRound = () => {
     showConfirmButton: false,
     allowOutsideClick: false,
   });
+
+  handleAttackButtons();
+  combat = true;
 };
 
 const playAudio = (folder, sound) => {
@@ -472,28 +491,21 @@ const updateRound = () => {
 
 const selectAttackUser = () => {
   const userWizard = document.getElementById("user-wizard");
+  const enemyWizard = document.getElementById("enemy-wizard");
   const btnAttacks = document.querySelectorAll(".select-attack__button");
 
   btnAttacks.forEach((attack) => {
     attack.addEventListener("click", () => {
-      const [enemyWizard, enemyAttack] = selectAttackEnemy();
       const userWizardText = userWizard.textContent;
+      const enemyWizardText = enemyWizard.textContent;
       const userAttack = attack.getAttribute("value").replace("-", " ");
+      const data = { idPlayer, attack: userAttack };
 
-      showAttackPlayers(userWizardText, userAttack, enemyWizard, enemyAttack);
-      validateWinner(enemyWizard, userWizardText, userAttack, enemyAttack);
+      showAttackPlayer(userWizardText, userAttack, enemyWizardText);
+      validateWinner(2, "enemy", enemyWizardText, userWizardText, userAttack);
+      sendAttacks(data);
     });
   });
-};
-
-const selectAttackEnemy = () => {
-  const enemyWizard = document.getElementById("enemy-wizard").textContent;
-  const enemy = enemyWizard;
-  const attacks = wizards[enemy].attacks;
-  const max = attacks.length - 1;
-  const attack = attacks[random(max, 0)].attack;
-
-  return [enemyWizard, attack];
 };
 
 const showAttackName = (wizard, attack) => {
@@ -513,7 +525,7 @@ const showAttackCombat = (wizard, id, attack) => {
   const wizardImage = document.getElementById(`combat-${wizard}-${id}`);
 
   if (attack) {
-    const attackPlayer = attack.replace(" ", "-");
+    const attackPlayer = String(attack).replace(" ", "-");
 
     wizardImage.src = `./img/attacks/${attackPlayer}.gif`;
 
@@ -541,23 +553,11 @@ const resetShowAttackImg = (wizard, id) => {
     : (wizardImage.className = "combat__image ");
 };
 
-const showAttackPlayers = (
-  userWizard,
-  userAttack,
-  enemyWizard,
-  enemyAttack
-) => {
+const showAttackPlayer = (userWizard, userAttack, enemyWizard) => {
   const healthEnemy = getHealthPlayer(2, enemyWizard, userWizard, userAttack);
 
-  if (healthEnemy > 0) {
-    setTimeout(() => showAttackCombat(userWizard, 1, userAttack), 500);
-    setTimeout(() => resetShowAttackImg(userWizard, 1), 5000);
-    setTimeout(() => showAttackCombat(enemyWizard, 2, enemyAttack), 6500);
-    setTimeout(() => resetShowAttackImg(enemyWizard, 2), 10000);
-  }
-
-  setTimeout(() => showAttackCombat(userWizard, 1, userAttack), 500);
-  setTimeout(() => resetShowAttackImg(userWizard, 1), 5000);
+  showAttackCombat(userWizard, 1, userAttack);
+  setTimeout(() => resetShowAttackImg(userWizard, 1), 4500);
 };
 
 const getHealthPlayer = (
@@ -632,79 +632,68 @@ const updateHealth = (id, damaged, attacker, attack) => {
   return [healthWizard, healthWizardValue];
 };
 
-const validateWinner = (damaged, attacker, attackUser, attackEnemy) => {
+const validateWinner = (id, player, damaged, attacker, attackUser) => {
   disabledButtons();
 
   const [healthWizardEnemy, healthWizardEnemyValue] = updateHealth(
-    2,
+    id,
     damaged,
     attacker,
     attackUser
   );
 
   if (healthWizardEnemyValue > 0) {
-    const [healthWizardUser, healthWizardUserValue] = updateHealth(
-      1,
-      attacker,
-      damaged,
-      attackEnemy
-    );
-
     setTimeout(() => {
       healthWizardEnemy.textContent = healthWizardEnemyValue;
-      updateHealthBar("enemy", damaged, healthWizardEnemyValue);
+      updateHealthBar(player, damaged, healthWizardEnemyValue);
+    }, 5000);
+  } else {
+    combat = false;
+    setTimeout(() => {
+      healthWizardEnemy.textContent = 0;
+      updateHealthBar(player, damaged, 0);
     }, 5000);
 
-    if (healthWizardUserValue > 0) {
-      setTimeout(() => {
-        healthWizardUser.textContent = healthWizardUserValue;
-        updateHealthBar("user", attacker, healthWizardUserValue);
-
-        enabledButtons();
-      }, 11300);
-    } else {
-      setTimeout(() => {
-        healthWizardEnemy.textContent = healthWizardEnemyValue;
-        updateHealthBar("enemy", damaged, healthWizardEnemyValue);
-      }, 5000);
-
-      setTimeout(() => {
-        healthWizardUser.textContent = 0;
-        updateHealthBar("user", attacker, 0);
-      }, 11300);
-
-      enemyVictory(damaged, attacker);
-    }
-  } else {
-    setTimeout(() => (healthWizardEnemy.textContent = 0), 1000);
-    userVictory(damaged, attacker);
+    playerResult(id, player, damaged, attacker);
   }
 };
 
-const userVictory = (damaged, attacker) => {
-  setTimeout(() => {
-    updateHealthBar("enemy", damaged, 0);
-    showHearts("enemy");
-    showImageDead(damaged, 2);
-  }, 2000);
+const getRolePlayer = (player) => {
+  let playerGame;
+  let sound;
 
-  setTimeout(() => {
-    showAlert("enemy", attacker, "Gana", "Round", attacker, damaged);
-    playAudio("results", "win");
-  }, 5000);
+  if (player !== "user") {
+    playerGame = "Aliado";
+    sound = "win";
+  } else {
+    playerGame = "Enemigo";
+    sound = "lose";
+  }
+
+  return [playerGame, sound];
 };
 
-const enemyVictory = (damaged, attacker) => {
-  setTimeout(() => {
-    updateHealthBar("user", attacker, 0);
-    showHearts("user");
-    showImageDead(attacker, 1);
-  }, 11300);
+const playerResult = (id, player, damaged, attacker) => {
+  const [playerGame, sound] = getRolePlayer(player);
 
   setTimeout(() => {
-    showAlert("user", damaged, "Pierde", "Round", attacker, damaged);
-    playAudio("results", "lose");
-  }, 13000);
+    showHearts(player);
+    showImageDead(damaged, id);
+  }, 6000);
+
+  setTimeout(() => {
+    showAlert(
+      id,
+      playerGame,
+      attacker,
+      "Gana",
+      "Round",
+      damaged,
+      attacker,
+      player
+    );
+    playAudio("results", sound);
+  }, 7500);
 };
 
 const showImageDead = (wizard, id) => {
@@ -777,54 +766,80 @@ const livesPlayer = (player) => {
   return lives;
 };
 
-const showAlert = (player, wizard, result, type, attacker, damaged) => {
-  let lives = livesPlayer(player);
+const showAlert = (
+  id,
+  player,
+  wizard,
+  result,
+  type,
+  damaged,
+  attacker,
+  playerType
+) => {
   const jsConfetti = new JSConfetti();
+  let lives = livesPlayer(playerType);
 
   jsConfetti.addConfetti();
 
   Swal.fire({
     title: `Vencedor ${wizard}`,
-    text: `El usuario ${result} el ${type}`,
+    text: `El mago ${player} ${result} el ${type}`,
     color: "#fff",
     imageUrl: `./img/wizards/${wizard}.gif`,
     imageWidth: 80,
     imageHeight: 80,
     imageAlt: `Wizard ${wizard}`,
     allowOutsideClick: false,
-  }).then(() => {
-    setTimeout(() => {
-      if (lives == 0) {
-        if (player == "user") {
-          saveVictories("enemy");
-          lives = updateLives("user");
-        } else {
-          saveVictories("user");
-        }
+    showConfirmButton: false,
+    timer: 3000,
+  });
 
-        showAlert("user", wizard, result, "Combate");
-        showBtnReset();
-        disabledButtons();
-      } else {
-        resetRound(attacker, damaged);
-      }
+  console.log(lives);
 
-      return;
-    }, 500);
+  setTimeout(() => {
+    if (lives == 0) {
+      showAlertCombat(wizard, player, result, "Combate");
+      showBtnReset();
+      disabledButtons();
+    } else {
+      resetRound(id, attacker, damaged);
+    }
+  }, 4000);
+};
+
+const showAlertCombat = (wizard, player, result, type) => {
+  Swal.fire({
+    title: `Vencedor ${wizard}`,
+    text: `El mago ${player} ${result} el ${type}`,
+    color: "#fff",
+    imageUrl: `./img/wizards/${wizard}.gif`,
+    imageWidth: 80,
+    imageHeight: 80,
+    imageAlt: `Wizard ${wizard}`,
+    allowOutsideClick: false,
+    showConfirmButton: false,
+    timer: 3000,
   });
 };
 
-const resetRound = (user, enemy) => {
+const resetRound = (id, user, enemy) => {
   updateRound();
-  resetHealthRound(user, enemy);
+  resetHealthRound(id, user, enemy);
   resetHealthBarRound(user, enemy);
-  enabledButtons();
   setTimeout(() => showRound(), 200);
 };
 
-const resetHealthRound = (user, enemy) => {
-  const healthUser = document.getElementById(`${user}-1`);
-  const healthEnemy = document.getElementById(`${enemy}-2`);
+const resetHealthRound = (id, user, enemy) => {
+  let healthUser;
+  let healthEnemy;
+
+  if (id !== 1) {
+    healthUser = document.getElementById(`${user}-1`);
+    healthEnemy = document.getElementById(`${enemy}-2`);
+  } else {
+    healthUser = document.getElementById(`${enemy}-1`);
+    healthEnemy = document.getElementById(`${user}-2`);
+  }
 
   healthUser.innerHTML = getCharacteristicWizard(user, "health");
   healthEnemy.innerHTML = getCharacteristicWizard(enemy, "health");
@@ -847,35 +862,110 @@ const showBtnReset = () => {
 };
 
 const resetGame = () => {
+  closeConnection();
   location.reload();
 };
 
-const saveVictories = (player) => {
-  let victories = sessionStorage.getItem(`${player}-victories`);
-
-  !victories
-    ? sessionStorage.setItem(`${player}-victories`, 1)
-    : sessionStorage.setItem(`${player}-victories`, ++victories);
+const joinGame = () => {
+  fetch("http://localhost:3000/join").then((res) => {
+    if (res.ok) {
+      res.text().then((player) => {
+        idPlayer = player;
+      });
+    }
+  });
 };
 
-const getVictories = (player) => {
-  let victories = sessionStorage.getItem(`${player}-victories`);
-
-  return victories ? victories : 0;
+const registerWizardSelected = (wizard) => {
+  fetch(`http://localhost:3000/wizard/${idPlayer}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      wizard,
+    }),
+  });
 };
 
-const showVictories = () => {
-  const results = document.getElementById("results");
-  const spanVictoriesUser = document.getElementById("victories-user");
-  const spanVictoriesEnemy = document.getElementById("victories-enemy");
-  const victoriesUser = getVictories("user");
-  const victoriesEnemy = getVictories("enemy");
+const sendWizardCoordinates = (positionX, positionY) => {
+  fetch(`http://localhost:3000/wizard/${idPlayer}/position`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      positionX,
+      positionY,
+    }),
+  }).then((res) => {
+    if (res.ok) {
+      res.json().then(({ enemies }) => {
+        enemiesList = enemies;
+      });
+    }
+  });
+};
 
-  if (victoriesUser !== 0 || victoriesEnemy !== 0) {
-    results.style.display = "block";
-    spanVictoriesUser.innerHTML = victoriesUser;
-    spanVictoriesEnemy.innerHTML = victoriesEnemy;
+const sendEnemyId = (enemyId) => {
+  fetch(`http://localhost:3000/enemy/${idPlayer}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      enemyId,
+    }),
+  });
+};
+
+const getState = () => {
+  fetch(`http://localhost:3000/player/${idPlayer}/state`).then((res) => {
+    if (res.ok) {
+      res.text().then((state) => {
+        statePlayer = state;
+      });
+    }
+  });
+};
+
+const connectWebsocket = () => {
+  socket = new WebSocket("ws://localhost:8000");
+
+  socket.onopen = () => {
+    socket.send(
+      JSON.stringify({
+        idPlayer,
+      })
+    );
+  };
+};
+
+const closeConnection = () => {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    socket.close();
   }
+};
+
+const sendAttacks = (data) => {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    socket.send(
+      JSON.stringify({
+        data,
+      })
+    );
+  }
+};
+
+const receiveAttacks = () => {
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    if (data.type === "attack" && data.attack) {
+      attack = data.attack;
+      combatInteractionHandler();
+    }
+  };
 };
 
 window.addEventListener("load", initGame);
