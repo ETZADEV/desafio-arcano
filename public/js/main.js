@@ -931,7 +931,7 @@ const getState = () => {
 };
 
 const connectWebsocket = () => {
-  socket = new WebSocket(`wss://${URL}`);
+  socket = new WebSocket(`ws://${URL}`);
 
   socket.onopen = () => {
     socket.send(
