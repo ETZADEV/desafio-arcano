@@ -1,7 +1,6 @@
 import { damageWizard, random } from "./utils.js";
 import wizards from "./wizards.js";
 
-const URL = "https://desafio-arcano.onrender.com";
 let idPlayer = null;
 let enemiesList = null;
 let globalInterval = null;
@@ -9,6 +8,7 @@ let statePlayer = null;
 let attack = null;
 let socket = null;
 let combat = true;
+const url = "https://desafio-arcano.onrender.com";
 
 const initGame = () => {
   const selectWizard = document.getElementById("select-wizard");
@@ -868,7 +868,7 @@ const resetGame = () => {
 };
 
 const joinGame = () => {
-  fetch(`${URL}/join`).then((res) => {
+  fetch(`${url}/join`).then((res) => {
     if (res.ok) {
       res.text().then((player) => {
         idPlayer = player;
@@ -878,7 +878,7 @@ const joinGame = () => {
 };
 
 const registerWizardSelected = (wizard) => {
-  fetch(`${URL}/wizard/${idPlayer}`, {
+  fetch(`${url}/wizard/${idPlayer}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -890,7 +890,7 @@ const registerWizardSelected = (wizard) => {
 };
 
 const sendWizardCoordinates = (positionX, positionY) => {
-  fetch(`${URL}/wizard/${idPlayer}/position`, {
+  fetch(`${url}/wizard/${idPlayer}/position`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -909,7 +909,7 @@ const sendWizardCoordinates = (positionX, positionY) => {
 };
 
 const sendEnemyId = (enemyId) => {
-  fetch(`${URL}/${idPlayer}`, {
+  fetch(`${url}/enemy/${idPlayer}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -921,7 +921,7 @@ const sendEnemyId = (enemyId) => {
 };
 
 const getState = () => {
-  fetch(`${URL}/player/${idPlayer}/state`).then((res) => {
+  fetch(`${url}/player/${idPlayer}/state`).then((res) => {
     if (res.ok) {
       res.text().then((state) => {
         statePlayer = state;
@@ -931,7 +931,7 @@ const getState = () => {
 };
 
 const connectWebsocket = () => {
-  socket = new WebSocket(`ws://${URL}`);
+  socket = new WebSocket(`wss://${URL}`);
 
   socket.onopen = () => {
     socket.send(

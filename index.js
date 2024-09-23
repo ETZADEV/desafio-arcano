@@ -11,8 +11,8 @@ const players = [];
 const clients = {};
 
 app.use(cors());
-app.use(express.static("public"));
 app.use(express.json());
+app.use(express.static("public"));
 
 class Player {
   constructor(id) {
