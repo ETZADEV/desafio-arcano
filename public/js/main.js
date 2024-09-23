@@ -931,7 +931,7 @@ const getState = () => {
 };
 
 const connectWebsocket = () => {
-  socket = new WebSocket(`wss://${URL}`);
+  socket = new WebSocket("wss://desafio-arcano.onrender.com");
 
   socket.onopen = () => {
     socket.send(
