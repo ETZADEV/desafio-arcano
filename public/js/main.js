@@ -1,6 +1,7 @@
 import { damageWizard, random } from "./utils.js";
 import wizards from "./wizards.js";
 
+const URL = "https://desafio-arcano.onrender.com";
 let idPlayer = null;
 let enemiesList = null;
 let globalInterval = null;
@@ -867,7 +868,7 @@ const resetGame = () => {
 };
 
 const joinGame = () => {
-  fetch("http://localhost:3000/join").then((res) => {
+  fetch(`${URL}/join`).then((res) => {
     if (res.ok) {
       res.text().then((player) => {
         idPlayer = player;
@@ -877,7 +878,7 @@ const joinGame = () => {
 };
 
 const registerWizardSelected = (wizard) => {
-  fetch(`http://localhost:3000/wizard/${idPlayer}`, {
+  fetch(`${URL}/wizard/${idPlayer}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -889,7 +890,7 @@ const registerWizardSelected = (wizard) => {
 };
 
 const sendWizardCoordinates = (positionX, positionY) => {
-  fetch(`http://localhost:3000/wizard/${idPlayer}/position`, {
+  fetch(`${URL}/wizard/${idPlayer}/position`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -908,7 +909,7 @@ const sendWizardCoordinates = (positionX, positionY) => {
 };
 
 const sendEnemyId = (enemyId) => {
-  fetch(`http://localhost:3000/enemy/${idPlayer}`, {
+  fetch(`${URL}/${idPlayer}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -920,7 +921,7 @@ const sendEnemyId = (enemyId) => {
 };
 
 const getState = () => {
-  fetch(`http://localhost:3000/player/${idPlayer}/state`).then((res) => {
+  fetch(`${URL}/player/${idPlayer}/state`).then((res) => {
     if (res.ok) {
       res.text().then((state) => {
         statePlayer = state;
@@ -930,7 +931,7 @@ const getState = () => {
 };
 
 const connectWebsocket = () => {
-  socket = new WebSocket("ws://localhost:8000");
+  socket = new WebSocket(`wss://${URL}`);
 
   socket.onopen = () => {
     socket.send(

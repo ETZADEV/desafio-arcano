@@ -2,7 +2,7 @@ import express from "express";
 import crypto from "crypto";
 import cors from "cors";
 import { WebSocketServer } from "ws";
-import { assignRandomStates } from "./js/utils.js";
+import { assignRandomStates } from "./public/js/utils.js";
 
 const app = express();
 const wss = new WebSocketServer({ port: 8000 });
@@ -11,6 +11,7 @@ const players = [];
 const clients = {};
 
 app.use(cors());
+app.use(express.static("public"));
 app.use(express.json());
 
 class Player {
